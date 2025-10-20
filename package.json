@@ -1,0 +1,30 @@
+{
+  "name": "CliniSync",
+  "version": "1.0.0",
+  "description": "CliniSync - Your Secure Foundation for Wellness",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "init-db": "node src/scripts/initDb.js"
+  },
+  "keywords": [
+    "saas",
+    "multi-tenant",
+    "physical-therapy"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "mysql2": "^3.6.5",
+    "jsonwebtoken": "^9.0.2",
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.3.1",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
+}
+
