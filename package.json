@@ -5,6 +5,7 @@
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
+    "start:railway": "node scripts/railway-init.js && node src/server.js",
     "dev": "nodemon src/server.js",
     "init-db": "node src/scripts/initDb.js",
     "init-prod-db": "node scripts/init-production-db.js"
