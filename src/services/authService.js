@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { usersDAL, clinicsDAL } = require('../config/dbAdapter');
+const usersDAL = require('../dal/usersDAL');
+const clinicsDAL = require('../dal/clinicsDAL');
 const { jwtSecret, jwtExpiresIn, bcryptSaltRounds } = require('../config/auth');
 const db = require('../config/database');
 

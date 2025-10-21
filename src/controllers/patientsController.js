@@ -1,4 +1,5 @@
-const { patientsDAL, sessionsDAL } = require('../config/dbAdapter');
+const patientsDAL = require('../dal/patientsDAL');
+const sessionsDAL = require('../dal/sessionsDAL');
 const { injectTenantId } = require('../middleware/tenantIsolation');
 
 class PatientsController {
@@ -14,7 +15,7 @@ class PatientsController {
       // If user is staff (not clinic_admin), filter by assigned therapist
       if (req.user.role === 'staff') {
         // Get all sessions where this user is the therapist
-        const sessions = await sessionsDAL.findAll(req.tenantContext.clinicId, {
+        const sessions = await sessionsDAL.findAll(req.tenantContext, {
           therapist_id: req.user.id
         });
         

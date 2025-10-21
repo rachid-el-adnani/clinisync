@@ -41,7 +41,7 @@ router.post('/', async (req, res, next) => {
   }
   
   if (req.user.role === 'staff') {
-    const { usersDAL } = require('../config/dbAdapter');
+    const usersDAL = require('../dal/usersDAL');
     const user = await usersDAL.findById(req.user.id);
     const jobTitle = (user.job_title || '').toLowerCase();
     

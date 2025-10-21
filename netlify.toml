@@ -21,5 +21,4 @@
 
 [build.environment]
   NODE_VERSION = "20"
-  USE_FIREBASE = "true"
 
