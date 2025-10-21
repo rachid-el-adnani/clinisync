@@ -106,9 +106,14 @@ class AuthService {
     if (user.clinic_id) {
       clinic = await clinicsDAL.findById(user.clinic_id);
       
-      // Check if clinic is active
+      // If clinic is deactivated, get the system admin info to show contact
       if (clinic && !clinic.is_active) {
-        throw new Error('This clinic account is currently inactive. Please contact support.');
+        const systemAdmins = await usersDAL.findByRole('system_admin');
+        clinic.deactivated_by = systemAdmins.length > 0 ? {
+          first_name: systemAdmins[0].first_name,
+          last_name: systemAdmins[0].last_name,
+          email: systemAdmins[0].email
+        } : null;
       }
     }
 
@@ -138,7 +143,9 @@ class AuthService {
       clinic: clinic ? {
         id: clinic.id,
         name: clinic.name,
-        primaryColor: clinic.primary_color
+        primaryColor: clinic.primary_color,
+        isActive: clinic.is_active,
+        deactivatedBy: clinic.deactivated_by || null
       } : null
     };
   }

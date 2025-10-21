@@ -1,0 +1,109 @@
+╔══════════════════════════════════════════════════════════════════╗
+║              🎉 CLINISYNC IS RUNNING LOCALLY! 🎉                 ║
+╚══════════════════════════════════════════════════════════════════╝
+
+✅ Backend API:  http://localhost:3000
+✅ Frontend:     http://localhost:5173
+✅ Database:     MySQL (localhost:3306)
+
+═══════════════════════════════════════════════════════════════════
+
+🌐 OPEN YOUR APP:
+
+→ http://localhost:5173
+
+═══════════════════════════════════════════════════════════════════
+
+🔑 LOGIN CREDENTIALS:
+
+System Admin:
+  Email:    admin@example.com
+  Password: admin123
+
+Demo Clinic Admin:
+  Email:    admin@demopt.com
+  Password: admin123
+
+Demo Therapist:
+  Email:    therapist@demopt.com
+  Password: admin123
+
+═══════════════════════════════════════════════════════════════════
+
+✅ WHAT'S RUNNING:
+
+Backend:
+  - Node.js/Express server
+  - Port: 3000
+  - API: http://localhost:3000/api
+  - Health: http://localhost:3000/health
+
+Frontend:
+  - React/Vite dev server
+  - Port: 5173
+  - Hot reload: Enabled
+
+Database:
+  - MySQL
+  - Name: physical_therapy_saas
+  - Sample data loaded
+  - Tables: clinics, users, patients, sessions
+
+═══════════════════════════════════════════════════════════════════
+
+🛠️ USEFUL COMMANDS:
+
+View backend logs:
+  Terminal output shows all API requests
+
+View frontend:
+  Open http://localhost:5173 in browser
+
+Restart backend:
+  Press Ctrl+C to stop, then: npm run dev
+
+Restart frontend:
+  Press Ctrl+C to stop, then: cd frontend && npm run dev
+
+Reset database:
+  npm run init-db
+
+═══════════════════════════════════════════════════════════════════
+
+🎯 WHAT YOU CAN DO:
+
+✅ Login as system admin
+✅ Create new clinics
+✅ Add clinic admins
+✅ Add patients
+✅ Add therapists/staff
+✅ Schedule sessions
+✅ View calendar
+✅ Manage everything!
+
+═══════════════════════════════════════════════════════════════════
+
+🔥 HOT RELOAD:
+
+Frontend changes = Auto-refresh browser
+Backend changes = Auto-restart server (nodemon)
+
+Just edit and save - changes appear automatically!
+
+═══════════════════════════════════════════════════════════════════
+
+📝 NEXT STEPS:
+
+1. Open http://localhost:5173
+2. Login with admin@example.com / admin123
+3. Explore the app!
+4. Create a clinic
+5. Add patients and staff
+6. Schedule some sessions
+
+═══════════════════════════════════════════════════════════════════
+
+🎊 YOUR APP IS READY TO USE!
+
+═══════════════════════════════════════════════════════════════════
+

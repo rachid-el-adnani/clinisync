@@ -90,6 +90,14 @@ export function AuthProvider({ children }) {
     return user?.role === 'system_admin' || user?.role === 'clinic_admin';
   };
 
+  const isClinicDeactivated = () => {
+    // System admins are never blocked by clinic deactivation
+    if (user?.role === 'system_admin') return false;
+    
+    // Clinic admins and staff are blocked if their clinic is deactivated
+    return clinic && clinic.isActive === false;
+  };
+
   const value = {
     user,
     clinic,
@@ -103,6 +111,7 @@ export function AuthProvider({ children }) {
     isStaff: user?.role === 'staff',
     isSecretary: isSecretary(),
     canEdit: canEdit(),
+    isClinicDeactivated: isClinicDeactivated(),
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

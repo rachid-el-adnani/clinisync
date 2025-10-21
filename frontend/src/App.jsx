@@ -13,10 +13,11 @@ import StaffDetailPage from './pages/StaffDetailPage';
 import AddStaffPage from './pages/AddStaffPage';
 import SchedulePage from './pages/SchedulePage';
 import SessionSeriesPage from './pages/SessionSeriesPage';
+import ClinicDeactivatedPage from './pages/ClinicDeactivatedPage';
 
 // Protected Route Component
 function ProtectedRoute({ children, requireSystemAdmin = false }) {
-  const { isAuthenticated, isSystemAdmin, loading } = useAuth();
+  const { isAuthenticated, isSystemAdmin, isClinicDeactivated, loading } = useAuth();
 
   if (loading) {
     return (
@@ -31,6 +32,11 @@ function ProtectedRoute({ children, requireSystemAdmin = false }) {
 
   if (!isAuthenticated) {
     return <Navigate to="/login" />;
+  }
+
+  // If clinic is deactivated, redirect to deactivated page
+  if (isClinicDeactivated) {
+    return <Navigate to="/clinic-deactivated" replace />;
   }
 
   if (requireSystemAdmin && !isSystemAdmin) {
@@ -154,6 +160,8 @@ function App() {
               </ProtectedRoute>
             }
           />
+          
+          <Route path="/clinic-deactivated" element={<ClinicDeactivatedPage />} />
           
           <Route path="/" element={<Navigate to="/dashboard" />} />
           <Route path="*" element={<Navigate to="/dashboard" />} />
