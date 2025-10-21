@@ -12,6 +12,7 @@ CREATE TABLE clinics (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(255) NOT NULL,
     primary_color VARCHAR(7) DEFAULT '#3B82F6',  -- Hex color for clinic branding
+    is_active BOOLEAN DEFAULT TRUE,  -- Clinic activation status
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX idx_clinic_name (name)
