@@ -26,12 +26,19 @@ PORT=3000
 - Copy your Railway URL (e.g., `https://clinisync-production.up.railway.app`)
 
 #### 5. Initialize Database
-Run once using Railway CLI:
-```bash
-railway login
-railway link
-railway run npm run init-prod-db
-```
+
+**Method 1 - Automatic (Recommended):**
+1. In Railway → Your Node.js service → Settings
+2. Find "Custom Start Command"
+3. Change to: `npm run start:railway`
+4. Click "Deploy"
+5. Check logs to confirm database initialization
+6. After confirmation, change back to `npm start` (optional - start:railway is safe to keep)
+
+**Method 2 - Manual via Dashboard:**
+1. Temporarily change start command to: `npm run init-prod-db && npm start`
+2. Deploy and watch logs
+3. Change back to `npm start`
 
 **Default System Admin Credentials:**
 - Email: `admin@clinisync.com`
