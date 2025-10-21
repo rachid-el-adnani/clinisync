@@ -1,0 +1,60 @@
+╔══════════════════════════════════════════════════════════════════╗
+║                    CLINISYNC RAILWAY SETUP                       ║
+║                     Quick Start Guide                            ║
+╚══════════════════════════════════════════════════════════════════╝
+
+📍 YOUR CURRENT STATUS:
+   ✅ Code deployed to Railway
+   ✅ Project linked locally
+   ✅ Domain: https://clinisync-production-e3de.up.railway.app
+   ❌ MySQL NOT ADDED (this is the only thing missing!)
+
+🎯 WHAT TO DO NOW (5 minutes):
+
+1️⃣  GO TO: https://railway.app
+    → Open project: "industrious-empathy"
+
+2️⃣  ADD MYSQL:
+    → Click "+ New" button
+    → Select "Database" → "Add MySQL"
+    → Wait 30 seconds for provisioning
+
+3️⃣  CONFIGURE START COMMAND:
+    → Click your "clinisync" service
+    → Go to "Settings" tab
+    → Find "Custom Start Command"
+    → Enter: npm run start:railway
+    → Click outside to save
+
+4️⃣  WATCH DEPLOYMENT:
+    → Go to "Deployments" tab
+    → Click latest deployment
+    → Watch logs for "Database ready!" message
+
+5️⃣  VERIFY IT WORKS:
+    Run in terminal:
+    → ./verify-deployment.sh
+
+6️⃣  TEST LOGIN:
+    → Open: https://clinisync-production-e3de.up.railway.app
+    → Login: admin@clinisync.com / admin123
+
+═══════════════════════════════════════════════════════════════════
+
+📚 THEN DEPLOY FRONTEND:
+
+1. Go to: https://app.netlify.com/start
+2. Deploy from Git → Select: rachid-el-adnani/clinisync
+3. Netlify auto-detects settings ✅
+4. Add environment variable:
+   VITE_API_URL=https://clinisync-production-e3de.up.railway.app/api
+5. Click "Deploy site"
+
+═══════════════════════════════════════════════════════════════════
+
+🎉 DONE! Your app will be live at:
+   Backend:  https://clinisync-production-e3de.up.railway.app
+   Frontend: https://your-site.netlify.app
+
+═══════════════════════════════════════════════════════════════════
+

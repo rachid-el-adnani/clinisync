@@ -52,10 +52,10 @@ class SessionsController {
       const { sessionId } = req.params;
       const { status, therapist_id, notes } = req.body;
 
-      const sessionsDAL = require('../dal/sessionsDAL');
+      const { sessionsDAL, usersDAL } = require('../config/dbAdapter');
       
       // Verify session exists and belongs to tenant
-      const session = await sessionsDAL.findById(sessionId, req.tenantContext);
+      const session = await sessionsDAL.findById(sessionId);
       if (!session) {
         return res.status(404).json({
           success: false,
@@ -65,7 +65,6 @@ class SessionsController {
 
       // If therapist is being changed, verify they belong to the clinic
       if (therapist_id) {
-        const usersDAL = require('../dal/usersDAL');
         const therapist = await usersDAL.findById(therapist_id);
         if (!therapist || therapist.clinic_id !== req.tenantContext.clinicId) {
           return res.status(400).json({
@@ -81,8 +80,8 @@ class SessionsController {
       if (therapist_id) updateData.therapist_id = therapist_id;
       if (notes !== undefined) updateData.notes = notes;
 
-      await sessionsDAL.update(sessionId, updateData, req.tenantContext);
-      const updatedSession = await sessionsDAL.findById(sessionId, req.tenantContext);
+      await sessionsDAL.update(sessionId, updateData);
+      const updatedSession = await sessionsDAL.findById(sessionId);
 
       res.status(200).json({
         success: true,

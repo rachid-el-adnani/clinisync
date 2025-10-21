@@ -1,0 +1,150 @@
+╔══════════════════════════════════════════════════════════════════╗
+║                  CLINISYNC VERCEL DEPLOYMENT                     ║
+║                    Frontend Deployment Guide                     ║
+╚══════════════════════════════════════════════════════════════════╝
+
+✅ BACKEND STATUS:
+   ✅ Railway backend is ready!
+   ✅ Database initialized
+   ✅ Configuration pushed to GitHub
+   ✅ Ready for Vercel deployment!
+
+═══════════════════════════════════════════════════════════════════
+
+🚀 DEPLOY TO VERCEL (3 EASY STEPS):
+
+STEP 1: Go to Vercel
+────────────────────────────────────────────────────────────────────
+1. Open: https://vercel.com/new
+2. Sign in with GitHub (if not already signed in)
+3. Click "Import Git Repository"
+
+STEP 2: Import Your Repository
+────────────────────────────────────────────────────────────────────
+1. Find or search for: rachid-el-adnani/clinisync
+2. Click "Import"
+
+STEP 3: Configure Project Settings
+────────────────────────────────────────────────────────────────────
+Vercel will show a configuration page. Enter these settings:
+
+┌────────────────────────────────────────────────────────────────┐
+│ Project Name:          clinisync                               │
+├────────────────────────────────────────────────────────────────┤
+│ Framework Preset:      Vite                                    │
+├────────────────────────────────────────────────────────────────┤
+│ Root Directory:        frontend                                │
+│                        (Click "Edit" and select "frontend")    │
+├────────────────────────────────────────────────────────────────┤
+│ Build Command:         npm run build                           │
+│                        (auto-detected ✅)                       │
+├────────────────────────────────────────────────────────────────┤
+│ Output Directory:      dist                                    │
+│                        (auto-detected ✅)                       │
+├────────────────────────────────────────────────────────────────┤
+│ Install Command:       npm install                             │
+│                        (auto-detected ✅)                       │
+└────────────────────────────────────────────────────────────────┘
+
+STEP 4: Add Environment Variable
+────────────────────────────────────────────────────────────────────
+In the "Environment Variables" section, click "Add":
+
+   Name:   VITE_API_URL
+   Value:  https://YOUR-RAILWAY-BACKEND.up.railway.app/api
+   
+   ⚠️ IMPORTANT: Replace YOUR-RAILWAY-BACKEND with your actual
+      Railway backend domain (NOT the MySQL domain!)
+
+STEP 5: Deploy!
+────────────────────────────────────────────────────────────────────
+1. Click "Deploy" button
+2. Wait ~2-3 minutes for deployment
+3. Vercel will show you the URL when complete!
+
+═══════════════════════════════════════════════════════════════════
+
+📝 AFTER DEPLOYMENT:
+
+STEP 6: Copy Your Vercel URL
+────────────────────────────────────────────────────────────────────
+After deployment completes, you'll get a URL like:
+   https://clinisync.vercel.app
+   OR
+   https://clinisync-git-main-rachid-el-adnani.vercel.app
+
+Copy this URL!
+
+STEP 7: Update Railway CORS
+────────────────────────────────────────────────────────────────────
+1. Go to: Railway Dashboard → Your project → clinisync service
+2. Go to: Variables tab
+3. Find: FRONTEND_URL
+4. Update to: https://your-vercel-url.vercel.app
+5. Save (Railway auto-redeploys)
+
+═══════════════════════════════════════════════════════════════════
+
+🎉 TEST YOUR APP:
+
+1. Open your Vercel URL
+2. You should see the CliniSync login page
+3. Login with:
+   Email:    admin@clinisync.com
+   Password: admin123
+
+4. If login works → SUCCESS! 🎊
+
+═══════════════════════════════════════════════════════════════════
+
+🔧 TROUBLESHOOTING:
+
+Issue: Build fails
+Fix:   Make sure "Root Directory" is set to "frontend"
+       Make sure "Framework Preset" is set to "Vite"
+
+Issue: 404 on routes
+Fix:   Already fixed with vercel.json rewrites ✅
+
+Issue: Login fails with CORS error
+Fix:   Make sure FRONTEND_URL in Railway matches your Vercel URL exactly
+       Both should use https://
+
+Issue: API connection error
+Fix:   Check VITE_API_URL in Vercel environment variables
+       Make sure it ends with /api
+       Redeploy after changing variables
+
+Issue: Can't find environment variables
+Fix:   Go to Project Settings → Environment Variables
+       Add VITE_API_URL there, then redeploy
+
+═══════════════════════════════════════════════════════════════════
+
+✨ VERCEL ADVANTAGES:
+
+✅ Automatic deployments on Git push
+✅ Preview deployments for every PR
+✅ Built-in analytics
+✅ Automatic HTTPS
+✅ Global CDN
+✅ Zero configuration needed (uses vercel.json)
+
+═══════════════════════════════════════════════════════════════════
+
+🌐 YOUR PRODUCTION URLS:
+
+Backend API:  https://YOUR-RAILWAY-BACKEND.up.railway.app
+Frontend:     https://clinisync.vercel.app (you'll get this URL)
+
+═══════════════════════════════════════════════════════════════════
+
+📌 REMEMBER:
+
+1. Root Directory = frontend
+2. Framework = Vite
+3. Add VITE_API_URL environment variable
+4. Update Railway FRONTEND_URL after deployment
+
+═══════════════════════════════════════════════════════════════════
+

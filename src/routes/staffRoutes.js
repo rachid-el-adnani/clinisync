@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const usersDAL = require('../dal/usersDAL');
+const { usersDAL } = require('../config/dbAdapter');
 const { authenticate, authorize } = require('../middleware/auth');
 const { tenantIsolationMiddleware } = require('../middleware/tenantIsolation');
 

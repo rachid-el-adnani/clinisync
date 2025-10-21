@@ -8,7 +8,8 @@
     "start:railway": "node scripts/railway-init.js && node src/server.js",
     "dev": "nodemon src/server.js",
     "init-db": "node src/scripts/initDb.js",
-    "init-prod-db": "node scripts/init-production-db.js"
+    "init-prod-db": "node scripts/init-production-db.js",
+    "init-firebase-demo": "node scripts/init-firebase-demo.js"
   },
   "keywords": [
     "saas",
@@ -18,15 +19,15 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.18.2",
-    "mysql2": "^3.6.5",
-    "jsonwebtoken": "^9.0.2",
     "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
     "dotenv": "^16.3.1",
-    "cors": "^2.8.5"
+    "express": "^4.18.2",
+    "firebase": "^12.4.0",
+    "jsonwebtoken": "^9.0.2",
+    "mysql2": "^3.6.5"
   },
   "devDependencies": {
     "nodemon": "^3.0.2"
   }
 }
-

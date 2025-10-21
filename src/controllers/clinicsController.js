@@ -1,7 +1,4 @@
-const clinicsDAL = require('../dal/clinicsDAL');
-const usersDAL = require('../dal/usersDAL');
-const patientsDAL = require('../dal/patientsDAL');
-const sessionsDAL = require('../dal/sessionsDAL');
+const { clinicsDAL, usersDAL, patientsDAL, sessionsDAL } = require('../config/dbAdapter');
 
 class ClinicsController {
   /**

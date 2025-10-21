@@ -1,0 +1,70 @@
+╔══════════════════════════════════════════════════════════════════╗
+║              HOW TO FIND YOUR BACKEND DOMAIN                     ║
+╚══════════════════════════════════════════════════════════════════╝
+
+🔍 IN RAILWAY DASHBOARD:
+
+1. Go to: https://railway.app
+2. Open your project: "industrious-empathy"
+
+3. You should see TWO services:
+
+   ┌─────────────────────────────────────────┐
+   │  Service: clinisync (or similar)        │  ← YOUR BACKEND
+   │  Type: Web Service (Node.js)            │
+   │  Domain: clinisync-production-xxx...    │  ← COPY THIS!
+   └─────────────────────────────────────────┘
+
+   ┌─────────────────────────────────────────┐
+   │  Service: MySQL                         │  ← YOUR DATABASE
+   │  Type: Database                         │
+   │  Domain: mysql-production-xxx...        │  ← NOT THIS ONE!
+   └─────────────────────────────────────────┘
+
+4. CLICK on the Node.js service (NOT MySQL)
+
+5. Look for "Settings" → "Domains" section
+
+6. You'll see a domain like:
+   https://clinisync-production-xxxx.up.railway.app
+   
+   OR
+   
+   https://web-production-xxxx.up.railway.app
+
+7. COPY that full URL!
+
+═══════════════════════════════════════════════════════════════════
+
+✅ HOW TO VERIFY IT'S THE RIGHT DOMAIN:
+
+The correct domain should:
+- Return a JSON response when you visit /health
+- Show "CliniSync" in the response
+- NOT be the MySQL domain
+
+Test it:
+→ Open: https://YOUR-DOMAIN.up.railway.app/health
+
+You should see something like:
+{
+  "status": "OK",
+  "timestamp": "...",
+  "uptime": 123
+}
+
+═══════════════════════════════════════════════════════════════════
+
+⚠️ COMMON MISTAKE:
+
+❌ mysql-production-xxxx.up.railway.app  ← Database domain (wrong!)
+✅ clinisync-production-xxxx.up.railway.app ← Backend domain (correct!)
+
+═══════════════════════════════════════════════════════════════════
+
+📝 ONCE YOU HAVE THE CORRECT DOMAIN:
+
+Tell me the domain and I'll update all the configuration files!
+
+═══════════════════════════════════════════════════════════════════
+
