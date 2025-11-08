@@ -5,12 +5,12 @@ class UsersDAL {
    * Create a new user
    */
   async create(userData) {
-    const { clinic_id, role, job_title, email, password_hash, first_name, last_name } = userData;
+    const { display_id, clinic_id, role, job_title, email, password_hash, first_name, last_name } = userData;
     
     const [result] = await db.execute(
-      `INSERT INTO users (clinic_id, role, job_title, email, password_hash, first_name, last_name)
-       VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      [clinic_id, role, job_title || null, email, password_hash, first_name, last_name]
+      `INSERT INTO users (display_id, clinic_id, role, job_title, email, password_hash, first_name, last_name)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [display_id, clinic_id, role, job_title || null, email, password_hash, first_name, last_name]
     );
     
     return result.insertId;
@@ -21,7 +21,7 @@ class UsersDAL {
    */
   async findById(id) {
     const [rows] = await db.execute(
-      `SELECT id, clinic_id, role, job_title, email, first_name, last_name, is_active, created_at, updated_at
+      `SELECT id, display_id, clinic_id, role, job_title, email, first_name, last_name, is_active, created_at, updated_at
        FROM users WHERE id = ?`,
       [id]
     );
@@ -33,7 +33,7 @@ class UsersDAL {
    */
   async findByEmail(email) {
     const [rows] = await db.execute(
-      `SELECT id, clinic_id, role, job_title, email, password_hash, first_name, last_name, is_active
+      `SELECT id, display_id, clinic_id, role, job_title, email, password_hash, first_name, last_name, is_active
        FROM users WHERE email = ?`,
       [email]
     );
@@ -45,7 +45,7 @@ class UsersDAL {
    */
   async findByClinicId(clinicId) {
     const [rows] = await db.execute(
-      `SELECT id, clinic_id, role, job_title, email, first_name, last_name, is_active, created_at, updated_at
+      `SELECT id, display_id, clinic_id, role, job_title, email, first_name, last_name, is_active, created_at, updated_at
        FROM users WHERE clinic_id = ? ORDER BY last_name, first_name`,
       [clinicId]
     );
@@ -56,7 +56,7 @@ class UsersDAL {
    * Find users by role
    */
   async findByRole(role, clinicId = null) {
-    let query = `SELECT id, clinic_id, role, job_title, email, first_name, last_name, is_active
+    let query = `SELECT id, display_id, clinic_id, role, job_title, email, first_name, last_name, is_active
                  FROM users WHERE role = ?`;
     const params = [role];
     

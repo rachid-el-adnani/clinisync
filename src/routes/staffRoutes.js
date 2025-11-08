@@ -3,6 +3,7 @@ const router = express.Router();
 const usersDAL = require('../dal/usersDAL');
 const { authenticate, authorize } = require('../middleware/auth');
 const { tenantIsolationMiddleware } = require('../middleware/tenantIsolation');
+const { generateUserDisplayId } = require('../utils/displayId');
 
 /**
  * All staff routes require authentication
@@ -48,7 +49,11 @@ router.post('/', authorize('clinic_admin'), async (req, res) => {
       });
     }
     
+    // Generate display ID
+    const display_id = await generateUserDisplayId();
+    
     const userId = await usersDAL.create({
+      display_id,
       clinic_id: req.tenantContext.clinicId,
       role: userRole,
       job_title: job_title || 'Staff',

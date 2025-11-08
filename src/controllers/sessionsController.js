@@ -64,8 +64,23 @@ class SessionsController {
         });
       }
 
-      // If therapist is being changed, verify they belong to the clinic
-      if (therapist_id) {
+      // If therapist is being changed, verify permissions and therapist belongs to clinic
+      if (therapist_id && parseInt(therapist_id) !== parseInt(session.therapist_id)) {
+        // Only clinic admins and secretaries can change the therapist assignment
+        if (req.tenantContext.role === 'staff') {
+          const { isSecretaryRole } = require('../constants/jobTitles');
+          const currentUser = await usersDAL.findById(req.tenantContext.userId);
+          
+          if (!isSecretaryRole(currentUser.job_title)) {
+            return res.status(403).json({
+              success: false,
+              message: 'Only clinic administrators and secretaries can change the assigned therapist'
+            });
+          }
+        }
+        
+        // Verify therapist belongs to the clinic and has a therapist role
+        const { isTherapistRole } = require('../constants/jobTitles');
         const therapist = await usersDAL.findById(therapist_id);
         if (!therapist || therapist.clinic_id !== req.tenantContext.clinicId) {
           return res.status(400).json({
@@ -73,15 +88,28 @@ class SessionsController {
             message: 'Therapist not found or does not belong to your clinic'
           });
         }
+        
+        if (!isTherapistRole(therapist.job_title)) {
+          return res.status(400).json({
+            success: false,
+            message: 'Selected staff member is not a therapist and cannot be assigned to sessions'
+          });
+        }
       }
 
       // Update the session
       const updateData = {};
-      if (status) updateData.status = status;
-      if (therapist_id) updateData.therapist_id = therapist_id;
-      if (notes !== undefined) updateData.notes = notes;
+      if (status && status !== session.status) updateData.status = status;
+      if (therapist_id && parseInt(therapist_id) !== parseInt(session.therapist_id)) {
+        updateData.therapist_id = parseInt(therapist_id);
+      }
+      if (notes !== undefined && notes !== session.notes) updateData.notes = notes;
 
-      await sessionsDAL.update(sessionId, updateData, req.tenantContext);
+      // Only update if there are actual changes
+      if (Object.keys(updateData).length > 0) {
+        await sessionsDAL.update(sessionId, updateData, req.tenantContext);
+      }
+      
       const updatedSession = await sessionsDAL.findById(sessionId, req.tenantContext);
 
       res.status(200).json({

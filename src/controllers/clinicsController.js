@@ -159,7 +159,17 @@ class ClinicsController {
         });
       }
 
-      const success = await clinicsDAL.update(id, { is_active });
+      // Prepare update data
+      const updateData = { is_active };
+      
+      // If deactivating, store the reason; if activating, clear it
+      if (is_active === false || is_active === 0) {
+        updateData.deactivation_reason = reason || null;
+      } else {
+        updateData.deactivation_reason = null;
+      }
+
+      const success = await clinicsDAL.update(id, updateData);
 
       if (!success) {
         return res.status(400).json({

@@ -240,7 +240,7 @@ class SessionsDAL {
 
     const allowedFields = [
       'start_time', 'duration_minutes', 'status', 
-      'periodicity', 'notes'
+      'periodicity', 'notes', 'therapist_id'
     ];
 
     for (const field of allowedFields) {
