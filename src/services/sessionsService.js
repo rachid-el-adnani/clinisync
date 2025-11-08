@@ -1,6 +1,7 @@
 const sessionsDAL = require('../dal/sessionsDAL');
 const patientsDAL = require('../dal/patientsDAL');
 const usersDAL = require('../dal/usersDAL');
+const notificationService = require('./notificationService');
 
 class SessionsService {
   /**
@@ -135,6 +136,10 @@ class SessionsService {
       // Create all follow-up sessions
       const followUpIds = await sessionsDAL.createBatch(followUpSessions);
 
+      // Create notifications for all sessions
+      const allSessionIds = [initialSessionId, ...followUpIds];
+      await notificationService.createSeriesReminders(allSessionIds, tenantContext.clinicId);
+
       return {
         parentSessionId: initialSessionId,
         followUpSessionIds: followUpIds,
@@ -196,6 +201,23 @@ class SessionsService {
       // Execute batch update
       await sessionsDAL.updateBatch(updates);
 
+      // Send rescheduling notifications and update reminders
+      for (const update of updates) {
+        const oldSession = allSessions.find(s => s.id === update.id);
+        const oldDate = new Date(oldSession.start_time);
+        const newDate = new Date(update.data.start_time);
+        
+        // Cancel old reminders
+        const notificationsDAL = require('../dal/notificationsDAL');
+        await notificationsDAL.cancelSessionNotifications(update.id);
+        
+        // Send rescheduling notification
+        await notificationService.sendReschedulingNotification(update.id, tenantContext.clinicId, oldDate, newDate);
+        
+        // Create new reminders
+        await notificationService.createSessionReminders(update.id, tenantContext.clinicId);
+      }
+
       return {
         updatedSessions: updates.length,
         timeDelta: timeDelta / (1000 * 60), // Convert to minutes
@@ -254,6 +276,9 @@ class SessionsService {
 
     await sessionsDAL.update(sessionId, { status: 'cancelled' }, tenantContext);
 
+    // Send cancellation notification
+    await notificationService.sendCancellationNotification(sessionId, tenantContext.clinicId);
+
     return { message: 'Session cancelled successfully' };
   }
 
@@ -277,6 +302,11 @@ class SessionsService {
     }));
 
     await sessionsDAL.updateBatch(updates);
+
+    // Send cancellation notifications for all sessions
+    for (const session of allSessions) {
+      await notificationService.sendCancellationNotification(session.id, tenantContext.clinicId);
+    }
 
     return {
       message: 'Session series cancelled successfully',

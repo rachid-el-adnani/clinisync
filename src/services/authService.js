@@ -4,6 +4,8 @@ const usersDAL = require('../dal/usersDAL');
 const clinicsDAL = require('../dal/clinicsDAL');
 const { jwtSecret, jwtExpiresIn, bcryptSaltRounds } = require('../config/auth');
 const db = require('../config/database');
+const { generateClinicDisplayId, generateUserDisplayId } = require('../utils/displayId');
+const notificationService = require('./notificationService');
 
 class AuthService {
   /**
@@ -36,10 +38,14 @@ class AuthService {
     try {
       await connection.beginTransaction();
 
+      // Generate display IDs
+      const clinicDisplayId = await generateClinicDisplayId();
+      const userDisplayId = await generateUserDisplayId();
+
       // Create clinic
       const [clinicResult] = await connection.execute(
-        'INSERT INTO clinics (name, primary_color) VALUES (?, ?)',
-        [clinicName, primaryColor || '#3B82F6']
+        'INSERT INTO clinics (display_id, name, primary_color) VALUES (?, ?, ?)',
+        [clinicDisplayId, clinicName, primaryColor || '#3B82F6']
       );
       const clinicId = clinicResult.insertId;
 
@@ -48,13 +54,16 @@ class AuthService {
 
       // Create admin user
       const [userResult] = await connection.execute(
-        `INSERT INTO users (clinic_id, role, email, password_hash, first_name, last_name)
-         VALUES (?, 'clinic_admin', ?, ?, ?, ?)`,
-        [clinicId, adminEmail, passwordHash, adminFirstName, adminLastName]
+        `INSERT INTO users (display_id, clinic_id, role, email, password_hash, first_name, last_name)
+         VALUES (?, ?, 'clinic_admin', ?, ?, ?, ?)`,
+        [userDisplayId, clinicId, adminEmail, passwordHash, adminFirstName, adminLastName]
       );
       const userId = userResult.insertId;
 
       await connection.commit();
+
+      // Initialize default notification settings for the new clinic
+      await notificationService.initializeClinicNotifications(clinicId);
 
       return {
         clinic: {
@@ -145,6 +154,7 @@ class AuthService {
         name: clinic.name,
         primaryColor: clinic.primary_color,
         isActive: clinic.is_active,
+        deactivationReason: clinic.deactivation_reason || null,
         deactivatedBy: clinic.deactivated_by || null
       } : null
     };
