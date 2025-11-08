@@ -8,6 +8,10 @@ const patientsRoutes = require('./routes/patientsRoutes');
 const sessionsRoutes = require('./routes/sessionsRoutes');
 const clinicsRoutes = require('./routes/clinicsRoutes');
 const staffRoutes = require('./routes/staffRoutes');
+const patientPortalRoutes = require('./routes/patientPortalRoutes');
+const treatmentPlansRoutes = require('./routes/treatmentPlansRoutes');
+const exercisesRoutes = require('./routes/exercisesRoutes');
+const notificationsRoutes = require('./routes/notificationsRoutes');
 
 // Create Express app
 const app = express();
@@ -15,6 +19,7 @@ const app = express();
 // Middleware
 const allowedOrigins = [
   'http://localhost:5173', // Local development
+  'http://localhost:5174', // Local development (alternate port)
   process.env.FRONTEND_URL // Production frontend URL
 ].filter(Boolean);
 
@@ -56,16 +61,26 @@ app.use('/api/patients', patientsRoutes);
 app.use('/api/sessions', sessionsRoutes);
 app.use('/api/clinics', clinicsRoutes);
 app.use('/api/staff', staffRoutes);
+app.use('/api/patient-portal', patientPortalRoutes);
+app.use('/api/treatment-plans', treatmentPlansRoutes);
+app.use('/api/exercises', exercisesRoutes);
+app.use('/api/notifications', notificationsRoutes);
 
 // Root endpoint
 app.get('/', (req, res) => {
   res.status(200).json({
     message: 'CliniSync - Your Secure Foundation for Wellness',
-    version: '1.0.0',
+    version: '2.0.0',
     endpoints: {
       auth: '/api/auth',
       patients: '/api/patients',
       sessions: '/api/sessions',
+      staff: '/api/staff',
+      clinics: '/api/clinics',
+      patientPortal: '/api/patient-portal',
+      treatmentPlans: '/api/treatment-plans',
+      exercises: '/api/exercises',
+      notifications: '/api/notifications',
       health: '/health'
     }
   });
