@@ -14,6 +14,12 @@ import AddStaffPage from './pages/AddStaffPage';
 import SchedulePage from './pages/SchedulePage';
 import SessionSeriesPage from './pages/SessionSeriesPage';
 import ClinicDeactivatedPage from './pages/ClinicDeactivatedPage';
+import PatientPortalLoginPage from './pages/PatientPortalLoginPage';
+import PatientPortalDashboardPage from './pages/PatientPortalDashboardPage';
+import TreatmentPlansPage from './pages/TreatmentPlansPage';
+import CreateTreatmentPlanPage from './pages/CreateTreatmentPlanPage';
+import TreatmentPlanDetailPage from './pages/TreatmentPlanDetailPage';
+import NotificationSettingsPage from './pages/NotificationSettingsPage';
 
 // Protected Route Component
 function ProtectedRoute({ children, requireSystemAdmin = false }) {
@@ -162,6 +168,48 @@ function App() {
           />
           
           <Route path="/clinic-deactivated" element={<ClinicDeactivatedPage />} />
+          
+          {/* Patient Portal Routes */}
+          <Route path="/patient-portal/login" element={<PatientPortalLoginPage />} />
+          <Route path="/patient-portal/dashboard" element={<PatientPortalDashboardPage />} />
+          
+          {/* Treatment Plans Routes */}
+          <Route
+            path="/treatment-plans"
+            element={
+              <ProtectedRoute>
+                <TreatmentPlansPage />
+              </ProtectedRoute>
+            }
+          />
+          
+          <Route
+            path="/treatment-plans/new"
+            element={
+              <ProtectedRoute>
+                <CreateTreatmentPlanPage />
+              </ProtectedRoute>
+            }
+          />
+          
+          <Route
+            path="/treatment-plans/:id"
+            element={
+              <ProtectedRoute>
+                <TreatmentPlanDetailPage />
+              </ProtectedRoute>
+            }
+          />
+          
+          {/* Notification Settings Routes */}
+          <Route
+            path="/notifications/settings"
+            element={
+              <ProtectedRoute>
+                <NotificationSettingsPage />
+              </ProtectedRoute>
+            }
+          />
           
           <Route path="/" element={<Navigate to="/dashboard" />} />
           <Route path="*" element={<Navigate to="/dashboard" />} />
