@@ -1,8 +1,9 @@
 import { useAuth } from '../contexts/AuthContext';
-import { Users, Calendar, Activity, LogOut, Plus, Building2, Clock } from 'lucide-react';
+import { Users, Calendar, Activity, Plus, Building2, Clock, FileText, Bell } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { sessionsAPI, patientsAPI } from '../utils/api';
+import Header from '../components/Header';
 
 export default function DashboardPage() {
   const { user, clinic, logout, isSystemAdmin, isClinicAdmin, isStaff } = useAuth();
@@ -58,11 +59,6 @@ export default function DashboardPage() {
     }
   };
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
-
   const formatSessionDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
@@ -83,51 +79,14 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 flex items-center justify-center">
-                <img src="/logo-icon.svg" alt="CliniSync" className="w-10 h-10" />
-              </div>
-              <div>
-                <h1 className="text-lg font-bold text-gray-900">
-                  {clinic?.name || 'CliniSync'}
-                </h1>
-                <p className="text-xs text-gray-500">
-                  {user?.role === 'system_admin' ? 'System Administrator' : 
-                   user?.role === 'clinic_admin' ? 'Clinic Administrator' : 'Staff Member'}
-                </p>
-              </div>
-            </div>
-            
-            <div className="flex items-center space-x-4">
-              <div className="text-right">
-                <p className="text-sm font-medium text-gray-900">
-                  {user?.firstName} {user?.lastName}
-                </p>
-                <p className="text-xs text-gray-500">{user?.email}</p>
-              </div>
-              
-              <button
-                onClick={handleLogout}
-                className="btn-secondary flex items-center space-x-2"
-              >
-                <LogOut className="w-4 h-4" />
-                <span>Logout</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <Header title="Dashboard" subtitle={user?.email} />
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Welcome Section */}
         <div className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-900">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
             Welcome back, {user?.firstName}!
           </h2>
           <p className="text-gray-600 mt-1">
@@ -149,7 +108,7 @@ export default function DashboardPage() {
                   <Building2 className="w-6 h-6 text-blue-600" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-semibold text-gray-900">View All Clinics</h3>
+                  <h3 className="font-semibold text-gray-900 dark:text-gray-100">View All Clinics</h3>
                   <p className="text-sm text-gray-600 mt-1">
                     Manage and view all registered clinics
                   </p>
@@ -166,7 +125,7 @@ export default function DashboardPage() {
                   <Plus className="w-6 h-6 text-primary-600" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-semibold text-gray-900">Register New Clinic</h3>
+                  <h3 className="font-semibold text-gray-900 dark:text-gray-100">Register New Clinic</h3>
                   <p className="text-sm text-gray-600 mt-1">
                     Create a new clinic with custom branding
                   </p>
@@ -190,7 +149,7 @@ export default function DashboardPage() {
                     <Users className="w-6 h-6 text-blue-600" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-semibold text-gray-900">Manage Patients</h3>
+                    <h3 className="font-semibold text-gray-900 dark:text-gray-100">Manage Patients</h3>
                     <p className="text-sm text-gray-600 mt-1">
                       View and manage patient records
                     </p>
@@ -207,7 +166,7 @@ export default function DashboardPage() {
                     <Calendar className="w-6 h-6 text-green-600" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-semibold text-gray-900">View Schedule</h3>
+                    <h3 className="font-semibold text-gray-900 dark:text-gray-100">View Schedule</h3>
                     <p className="text-sm text-gray-600 mt-1">
                       View all sessions and appointments
                     </p>
@@ -224,9 +183,43 @@ export default function DashboardPage() {
                     <Activity className="w-6 h-6 text-purple-600" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-semibold text-gray-900">Manage Staff</h3>
+                    <h3 className="font-semibold text-gray-900 dark:text-gray-100">Manage Staff</h3>
                     <p className="text-sm text-gray-600 mt-1">
                       View and manage staff members
+                    </p>
+                  </div>
+                </div>
+              </button>
+
+              <button
+                onClick={() => navigate('/treatment-plans')}
+                className="card hover:shadow-md transition-shadow cursor-pointer text-left group"
+              >
+                <div className="flex items-start space-x-4">
+                  <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center group-hover:bg-orange-200 transition-colors">
+                    <FileText className="w-6 h-6 text-orange-600" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-gray-900 dark:text-gray-100">Treatment Plans</h3>
+                    <p className="text-sm text-gray-600 mt-1">
+                      Manage patient treatment plans
+                    </p>
+                  </div>
+                </div>
+              </button>
+
+              <button
+                onClick={() => navigate('/notifications/settings')}
+                className="card hover:shadow-md transition-shadow cursor-pointer text-left group"
+              >
+                <div className="flex items-start space-x-4">
+                  <div className="w-12 h-12 bg-pink-100 rounded-xl flex items-center justify-center group-hover:bg-pink-200 transition-colors">
+                    <Bell className="w-6 h-6 text-pink-600" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-gray-900 dark:text-gray-100">Notifications</h3>
+                    <p className="text-sm text-gray-600 mt-1">
+                      Configure appointment reminders
                     </p>
                   </div>
                 </div>
@@ -238,7 +231,7 @@ export default function DashboardPage() {
               <div className="card">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-600">Total Patients</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Total Patients</p>
                     <p className="text-3xl font-bold text-gray-900 mt-2">-</p>
                   </div>
                   <div className="w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center">
@@ -250,7 +243,7 @@ export default function DashboardPage() {
               <div className="card">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-600">Upcoming Sessions</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Upcoming Sessions</p>
                     <p className="text-3xl font-bold text-gray-900 mt-2">-</p>
                   </div>
                   <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
@@ -262,7 +255,7 @@ export default function DashboardPage() {
               <div className="card">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-600">Active Therapists</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Active Therapists</p>
                     <p className="text-3xl font-bold text-gray-900 mt-2">-</p>
                   </div>
                   <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
@@ -282,8 +275,8 @@ export default function DashboardPage() {
                     style={{ backgroundColor: clinic.primaryColor }}
                   />
                   <div>
-                    <p className="text-sm font-medium text-gray-900">{clinic.primaryColor}</p>
-                    <p className="text-xs text-gray-500">Primary Brand Color</p>
+                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{clinic.primaryColor}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Primary Brand Color</p>
                   </div>
                 </div>
                 
@@ -316,7 +309,7 @@ export default function DashboardPage() {
                     <Users className="w-6 h-6 text-blue-600" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-semibold text-gray-900">My Patients</h3>
+                    <h3 className="font-semibold text-gray-900 dark:text-gray-100">My Patients</h3>
                     <p className="text-sm text-gray-600 mt-1">
                       View your assigned patients
                     </p>
@@ -333,9 +326,26 @@ export default function DashboardPage() {
                     <Calendar className="w-6 h-6 text-green-600" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-semibold text-gray-900">My Schedule</h3>
+                    <h3 className="font-semibold text-gray-900 dark:text-gray-100">My Schedule</h3>
                     <p className="text-sm text-gray-600 mt-1">
                       View your upcoming sessions
+                    </p>
+                  </div>
+                </div>
+              </button>
+
+              <button
+                onClick={() => navigate('/treatment-plans')}
+                className="card hover:shadow-md transition-shadow cursor-pointer text-left group"
+              >
+                <div className="flex items-start space-x-4">
+                  <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center group-hover:bg-orange-200 transition-colors">
+                    <FileText className="w-6 h-6 text-orange-600" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-gray-900 dark:text-gray-100">Treatment Plans</h3>
+                    <p className="text-sm text-gray-600 mt-1">
+                      View and manage treatment plans
                     </p>
                   </div>
                 </div>
@@ -345,16 +355,16 @@ export default function DashboardPage() {
             {/* Upcoming Sessions */}
             <div className="card">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-lg font-semibold text-gray-900">Upcoming Sessions</h3>
-                <span className="text-sm text-gray-500">{upcomingSessions.length} scheduled</span>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Upcoming Sessions</h3>
+                <span className="text-sm text-gray-500 dark:text-gray-400">{upcomingSessions.length} scheduled</span>
               </div>
 
               {loading ? (
-                <div className="text-center py-8 text-gray-500">Loading sessions...</div>
+                <div className="text-center py-8 text-gray-500 dark:text-gray-400">Loading sessions...</div>
               ) : upcomingSessions.length === 0 ? (
                 <div className="text-center py-8">
                   <Calendar className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                  <p className="text-gray-500">No upcoming sessions scheduled</p>
+                  <p className="text-gray-500 dark:text-gray-400">No upcoming sessions scheduled</p>
                 </div>
               ) : (
                 <div className="space-y-3">
@@ -368,10 +378,10 @@ export default function DashboardPage() {
                       >
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
-                            <p className="font-medium text-gray-900">
+                            <p className="font-medium text-gray-900 dark:text-gray-100">
                               {patient ? `${patient.first_name} ${patient.last_name}` : 'Loading...'}
                             </p>
-                            <div className="flex items-center space-x-4 mt-2 text-sm text-gray-600">
+                            <div className="flex items-center space-x-4 mt-2 text-sm text-gray-600 dark:text-gray-400">
                               <div className="flex items-center space-x-1">
                                 <Calendar className="w-4 h-4" />
                                 <span>{formatSessionDate(session.start_time)}</span>
