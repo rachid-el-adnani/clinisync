@@ -1,13 +1,22 @@
-import { AlertTriangle, Mail, Phone } from 'lucide-react';
+import { AlertTriangle, Mail } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { Navigate } from 'react-router-dom';
 
 export default function ClinicDeactivatedPage() {
-  const { clinic, logout } = useAuth();
+  const { clinic, logout, user, isClinicDeactivated } = useAuth();
+
+  // Redirect to dashboard if clinic is active or user is system admin
+  if (!isClinicDeactivated || user?.role === 'system_admin') {
+    return <Navigate to="/dashboard" replace />;
+  }
 
   const handleLogout = () => {
     logout();
     window.location.href = '/login';
   };
+
+  // Staff members see a simplified version
+  const isStaff = user?.role === 'staff';
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 flex items-center justify-center p-4">
@@ -28,6 +37,28 @@ export default function ClinicDeactivatedPage() {
 
           {/* Content */}
           <div className="px-8 py-10">
+            {isStaff ? (
+              // Simplified view for staff members
+              <>
+                <div className="text-center mb-8">
+                  <p className="text-gray-600 text-lg">
+                    Please contact your clinic administrator for more information.
+                  </p>
+                </div>
+
+                {/* Logout Button */}
+                <div className="flex justify-center">
+                  <button
+                    onClick={handleLogout}
+                    className="btn-primary"
+                  >
+                    Logout
+                  </button>
+                </div>
+              </>
+            ) : (
+              // Full view for clinic admins
+              <>
             {/* Reason */}
             <div className="mb-8">
               <h2 className="text-lg font-semibold text-gray-900 mb-3">
@@ -35,7 +66,7 @@ export default function ClinicDeactivatedPage() {
               </h2>
               <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r-lg">
                 <p className="text-gray-800">
-                  {clinic?.deactivation_reason || 'No specific reason provided. Please contact the system administrator for details.'}
+                  {clinic?.deactivationReason || 'No specific reason provided. Please contact the system administrator for details.'}
                 </p>
               </div>
             </div>
@@ -128,6 +159,8 @@ export default function ClinicDeactivatedPage() {
                 Logout
               </button>
             </div>
+              </>
+            )}
           </div>
 
           {/* Footer */}

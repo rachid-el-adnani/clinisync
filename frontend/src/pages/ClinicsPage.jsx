@@ -28,9 +28,9 @@ export default function ClinicsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
+      <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 transition-colors sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4">
@@ -41,7 +41,7 @@ export default function ClinicsPage() {
                 <ArrowLeft className="w-4 h-4" />
                 <span>Dashboard</span>
               </button>
-              <h1 className="text-xl font-bold text-gray-900">All Clinics</h1>
+              <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">All Clinics</h1>
             </div>
 
             <button
@@ -67,7 +67,7 @@ export default function ClinicsPage() {
           <div className="flex items-center justify-center py-12">
             <div className="text-center">
               <div className="w-16 h-16 border-4 border-primary-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
-              <p className="mt-4 text-gray-600">Loading clinics...</p>
+              <p className="mt-4 text-gray-600 dark:text-gray-400">Loading clinics...</p>
             </div>
           </div>
         ) : (
@@ -77,7 +77,7 @@ export default function ClinicsPage() {
               <div className="card">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-600">Total Clinics</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Total Clinics</p>
                     <p className="text-3xl font-bold text-gray-900 mt-2">{clinics.length}</p>
                   </div>
                   <div className="w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center">
@@ -89,7 +89,7 @@ export default function ClinicsPage() {
               <div className="card">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-600">Total Admins</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Total Admins</p>
                     <p className="text-3xl font-bold text-gray-900 mt-2">
                       {clinics.reduce((sum, c) => sum + c.adminCount, 0)}
                     </p>
@@ -103,7 +103,7 @@ export default function ClinicsPage() {
               <div className="card">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-600">Total Staff</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Total Staff</p>
                     <p className="text-3xl font-bold text-gray-900 mt-2">
                       {clinics.reduce((sum, c) => sum + c.staffCount, 0)}
                     </p>
@@ -145,7 +145,10 @@ export default function ClinicsPage() {
                           </span>
                         )}
                       </div>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        {clinic.display_id}
+                      </p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
                         Created {new Date(clinic.created_at).toLocaleDateString()}
                       </p>
                     </div>
@@ -164,16 +167,16 @@ export default function ClinicsPage() {
                   {/* Stats */}
                   <div className="space-y-2">
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-600">Admins</span>
-                      <span className="font-medium text-gray-900">{clinic.adminCount}</span>
+                      <span className="text-gray-600 dark:text-gray-400">Admins</span>
+                      <span className="font-medium text-gray-900 dark:text-gray-100">{clinic.adminCount}</span>
                     </div>
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-600">Staff</span>
-                      <span className="font-medium text-gray-900">{clinic.staffCount}</span>
+                      <span className="text-gray-600 dark:text-gray-400">Staff</span>
+                      <span className="font-medium text-gray-900 dark:text-gray-100">{clinic.staffCount}</span>
                     </div>
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-600">Total Users</span>
-                      <span className="font-medium text-gray-900">{clinic.totalUsers}</span>
+                      <span className="text-gray-600 dark:text-gray-400">Total Users</span>
+                      <span className="font-medium text-gray-900 dark:text-gray-100">{clinic.totalUsers}</span>
                     </div>
                   </div>
 
@@ -196,7 +199,7 @@ export default function ClinicsPage() {
             {clinics.length === 0 && (
               <div className="text-center py-12">
                 <Building2 className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-600">No clinics registered yet</p>
+                <p className="text-gray-600 dark:text-gray-400">No clinics registered yet</p>
                 <button
                   onClick={() => navigate('/register-clinic')}
                   className="btn-primary mt-4"

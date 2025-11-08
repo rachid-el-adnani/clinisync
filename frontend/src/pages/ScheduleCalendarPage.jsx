@@ -143,9 +143,9 @@ export default function ScheduleCalendarPage() {
   const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
+      <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 transition-colors sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4">
@@ -172,8 +172,8 @@ export default function ScheduleCalendarPage() {
                   <Calendar className="w-5 h-5 text-primary-600" />
                 </div>
                 <div>
-                  <h1 className="text-xl font-bold text-gray-900">Schedule</h1>
-                  <p className="text-xs text-gray-500">Calendar View</p>
+                  <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">Schedule</h1>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Calendar View</p>
                 </div>
               </div>
             </div>
@@ -189,7 +189,7 @@ export default function ScheduleCalendarPage() {
             <button onClick={navigatePrevMonth} className="btn-secondary p-2">
               <ChevronLeft className="w-5 h-5" />
             </button>
-            <h2 className="text-2xl font-bold text-gray-900 min-w-[200px] text-center">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 min-w-[200px] text-center">
               {currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
             </h2>
             <button onClick={navigateNextMonth} className="btn-secondary p-2">
@@ -211,11 +211,11 @@ export default function ScheduleCalendarPage() {
           <div className="flex items-center justify-center py-12">
             <div className="text-center">
               <div className="w-16 h-16 border-4 border-primary-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
-              <p className="mt-4 text-gray-600">Loading calendar...</p>
+              <p className="mt-4 text-gray-600 dark:text-gray-400">Loading calendar...</p>
             </div>
           </div>
         ) : (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 transition-colors overflow-hidden">
             {/* Calendar Grid */}
             <div className="grid grid-cols-7">
               {/* Week day headers */}

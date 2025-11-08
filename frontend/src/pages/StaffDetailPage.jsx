@@ -89,7 +89,7 @@ export default function StaffDetailPage() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-primary-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading staff details...</p>
+          <p className="mt-4 text-gray-600 dark:text-gray-400">Loading staff details...</p>
         </div>
       </div>
     );
@@ -109,9 +109,9 @@ export default function StaffDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
+      <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 transition-colors sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4">
@@ -129,10 +129,10 @@ export default function StaffDetailPage() {
                   </span>
                 </div>
                 <div>
-                  <h1 className="text-xl font-bold text-gray-900">
+                  <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
                     {staff?.first_name} {staff?.last_name}
                   </h1>
-                  <p className="text-xs text-gray-500 capitalize">{staff?.role?.replace('_', ' ')}</p>
+                  <p className="text-xs text-gray-500 capitalize">{staff?.role?.replace('_', ' ')} | {staff?.display_id}</p>
                 </div>
               </div>
             </div>
@@ -173,8 +173,8 @@ export default function StaffDetailPage() {
           {/* Left Column - Staff Details */}
           <div className="lg:col-span-2 space-y-6">
             {/* Basic Information Card */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Staff Information</h2>
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Staff Information</h2>
               
               {isEditing ? (
                 <form onSubmit={handleUpdate} className="space-y-4">
@@ -230,7 +230,7 @@ export default function StaffDetailPage() {
                       onChange={(e) => setEditData({ ...editData, is_active: e.target.checked })}
                       className="rounded"
                     />
-                    <label className="text-sm text-gray-700">Active Staff Member</label>
+                    <label className="text-sm text-gray-700 dark:text-gray-300">Active Staff Member</label>
                   </div>
                   
                   <div className="flex space-x-3">
@@ -245,8 +245,8 @@ export default function StaffDetailPage() {
                   <div className="flex items-start space-x-3">
                     <User className="w-5 h-5 text-gray-400 mt-0.5" />
                     <div>
-                      <p className="text-sm text-gray-500">Full Name</p>
-                      <p className="text-sm font-medium text-gray-900">
+                      <p className="text-sm text-gray-500 dark:text-gray-400">Full Name</p>
+                      <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                         {staff?.first_name} {staff?.last_name}
                       </p>
                     </div>
@@ -255,15 +255,15 @@ export default function StaffDetailPage() {
                   <div className="flex items-start space-x-3">
                     <Mail className="w-5 h-5 text-gray-400 mt-0.5" />
                     <div>
-                      <p className="text-sm text-gray-500">Email</p>
-                      <p className="text-sm font-medium text-gray-900">{staff?.email}</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">Email</p>
+                      <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{staff?.email}</p>
                     </div>
                   </div>
 
                   <div className="flex items-start space-x-3">
                     <User className="w-5 h-5 text-gray-400 mt-0.5" />
                     <div>
-                      <p className="text-sm text-gray-500">Permission Level</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">Permission Level</p>
                       <span className={`px-2 py-1 text-xs font-medium rounded-full ${getRoleBadgeColor(staff?.role)}`}>
                         {staff?.role === 'clinic_admin' ? 'Admin' : 'Staff'}
                       </span>
@@ -274,8 +274,8 @@ export default function StaffDetailPage() {
                     <div className="flex items-start space-x-3">
                       <User className="w-5 h-5 text-gray-400 mt-0.5" />
                       <div>
-                        <p className="text-sm text-gray-500">Job Title</p>
-                        <p className="text-sm font-medium text-gray-900">{staff.job_title}</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">Job Title</p>
+                        <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{staff.job_title}</p>
                       </div>
                     </div>
                   )}
@@ -283,13 +283,13 @@ export default function StaffDetailPage() {
                   <div className="flex items-start space-x-3">
                     <Activity className="w-5 h-5 text-gray-400 mt-0.5" />
                     <div>
-                      <p className="text-sm text-gray-500">Status</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">Status</p>
                       {staff?.is_active ? (
                         <span className="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">
                           Active
                         </span>
                       ) : (
-                        <span className="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800">
+                        <span className="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800 dark:text-gray-100">
                           Inactive
                         </span>
                       )}
@@ -300,8 +300,8 @@ export default function StaffDetailPage() {
             </div>
 
             {/* Related Patients Card */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
                 Related Patients ({relatedPatients.length})
               </h2>
               
@@ -324,7 +324,7 @@ export default function StaffDetailPage() {
                         <p className="text-sm font-medium text-gray-900 truncate">
                           {patient.first_name} {patient.last_name}
                         </p>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
                           {sessions.filter((s) => s.patient_id === patient.id).length} sessions
                         </p>
                       </div>
@@ -339,25 +339,25 @@ export default function StaffDetailPage() {
           {/* Right Column - Stats */}
           <div className="space-y-6">
             {/* Quick Stats */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Stats</h2>
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Quick Stats</h2>
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Total Patients</span>
-                  <span className="text-lg font-semibold text-gray-900">{relatedPatients.length}</span>
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Total Patients</span>
+                  <span className="text-lg font-semibold text-gray-900 dark:text-gray-100">{relatedPatients.length}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Total Sessions</span>
-                  <span className="text-lg font-semibold text-gray-900">{sessions.length}</span>
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Total Sessions</span>
+                  <span className="text-lg font-semibold text-gray-900 dark:text-gray-100">{sessions.length}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Completed</span>
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Completed</span>
                   <span className="text-lg font-semibold text-green-600">
                     {sessions.filter((s) => s.status === 'completed').length}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Upcoming</span>
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Upcoming</span>
                   <span className="text-lg font-semibold text-blue-600">
                     {sessions.filter((s) => s.status === 'scheduled').length}
                   </span>
@@ -366,8 +366,8 @@ export default function StaffDetailPage() {
             </div>
 
             {/* Recent Sessions */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Recent Sessions</h2>
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Recent Sessions</h2>
               
               {sessions.length === 0 ? (
                 <p className="text-gray-500 text-sm">No sessions yet</p>
@@ -380,7 +380,7 @@ export default function StaffDetailPage() {
                         key={session.id}
                         className="p-3 bg-gray-50 rounded-lg"
                       >
-                        <p className="text-sm font-medium text-gray-900">
+                        <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                           {patient ? `${patient.first_name} ${patient.last_name}` : 'Unknown'}
                         </p>
                         <p className="text-xs text-gray-500 mt-1">
@@ -409,10 +409,10 @@ export default function StaffDetailPage() {
 
         {/* Delete Confirmation Modal */}
         {showDeleteConfirm && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Delete Staff Member</h3>
-              <p className="text-gray-600 mb-6">
+          <div className="fixed inset-0 bg-black dark:bg-gray-900 bg-opacity-50 dark:bg-opacity-70 flex items-center justify-center z-50 p-4">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full p-6 transition-colors">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Delete Staff Member</h3>
+              <p className="text-gray-600 dark:text-gray-400 mb-6">
                 Are you sure you want to delete {staff?.first_name} {staff?.last_name}? This action cannot be undone.
               </p>
               <div className="flex space-x-3">

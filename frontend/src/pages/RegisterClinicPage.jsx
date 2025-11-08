@@ -72,9 +72,9 @@ export default function RegisterClinicPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200">
+      <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 transition-colors">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center h-16 space-x-4">
             <button
@@ -84,7 +84,7 @@ export default function RegisterClinicPage() {
               <ArrowLeft className="w-4 h-4" />
               <span>Back</span>
             </button>
-            <h1 className="text-xl font-bold text-gray-900">Register New Clinic</h1>
+            <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">Register New Clinic</h1>
           </div>
         </div>
       </header>
@@ -194,7 +194,7 @@ export default function RegisterClinicPage() {
           <div className="card">
             <div className="flex items-center space-x-2 mb-4">
               <Palette className="w-5 h-5 text-primary-600" />
-              <h2 className="text-lg font-semibold text-gray-900">Brand Color</h2>
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Brand Color</h2>
             </div>
             
             <p className="text-sm text-gray-600 mb-4">
@@ -265,7 +265,7 @@ export default function RegisterClinicPage() {
                       className="w-full h-16 rounded border border-gray-200"
                       style={{ backgroundColor: color }}
                     />
-                    <p className="text-xs text-center text-gray-600">{shade}</p>
+                    <p className="text-xs text-center text-gray-600 dark:text-gray-400">{shade}</p>
                   </div>
                 ))}
               </div>

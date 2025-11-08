@@ -36,9 +36,9 @@ export default function PatientsManagementPage() {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
+      <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 transition-colors sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4">
@@ -54,8 +54,8 @@ export default function PatientsManagementPage() {
                   <Users className="w-5 h-5 text-primary-600" />
                 </div>
                 <div>
-                  <h1 className="text-xl font-bold text-gray-900">Patients</h1>
-                  <p className="text-xs text-gray-500">{patients.length} total patients</p>
+                  <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">Patients</h1>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">{patients.length} total patients</p>
                 </div>
               </div>
             </div>
@@ -99,7 +99,7 @@ export default function PatientsManagementPage() {
           <div className="flex items-center justify-center py-12">
             <div className="text-center">
               <div className="w-16 h-16 border-4 border-primary-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
-              <p className="mt-4 text-gray-600">Loading patients...</p>
+              <p className="mt-4 text-gray-600 dark:text-gray-400">Loading patients...</p>
             </div>
           </div>
         ) : filteredPatients.length === 0 ? (
@@ -122,9 +122,9 @@ export default function PatientsManagementPage() {
             )}
           </div>
         ) : (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 transition-colors overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
+              <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-600">
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -144,7 +144,7 @@ export default function PatientsManagementPage() {
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-600">
                   {filteredPatients.map((patient) => (
                     <tr
                       key={patient.id}
@@ -159,18 +159,18 @@ export default function PatientsManagementPage() {
                             </span>
                           </div>
                           <div className="ml-4">
-                            <div className="text-sm font-medium text-gray-900">
+                            <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
                               {patient.first_name} {patient.last_name}
                             </div>
-                            <div className="text-sm text-gray-500">ID: {patient.id}</div>
+                            <div className="text-sm text-gray-500 dark:text-gray-400">ID: {patient.display_id}</div>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="text-sm text-gray-900">{patient.email || '-'}</div>
-                        <div className="text-sm text-gray-500">{patient.phone || '-'}</div>
+                        <div className="text-sm text-gray-900 dark:text-gray-100">{patient.email || '-'}</div>
+                        <div className="text-sm text-gray-500 dark:text-gray-400">{patient.phone || '-'}</div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
                         {patient.date_of_birth
                           ? new Date(patient.date_of_birth).toLocaleDateString()
                           : '-'}
@@ -181,7 +181,7 @@ export default function PatientsManagementPage() {
                             Active
                           </span>
                         ) : (
-                          <span className="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800">
+                          <span className="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800 dark:text-gray-100">
                             Inactive
                           </span>
                         )}
@@ -192,7 +192,7 @@ export default function PatientsManagementPage() {
                             e.stopPropagation();
                             navigate(`/patients/${patient.id}`);
                           }}
-                          className="text-primary-600 hover:text-primary-900"
+                          className="text-primary-600 dark:text-primary-400 hover:text-primary-900 dark:hover:text-primary-300"
                         >
                           View Details
                         </button>

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { clinicsAPI } from '../utils/api';
-import { ArrowLeft, Building2, Users, UserCheck, Calendar, Activity, CheckCircle, Palette, Edit2, Power, X } from 'lucide-react';
+import { ArrowLeft, Building2, Users, UserCheck, Palette, Edit2, Power, X } from 'lucide-react';
 import { generateColorPalette, isValidHexColor } from '../utils/colorPalette';
 
 export default function ClinicDetailPage() {
@@ -78,7 +78,7 @@ export default function ClinicDetailPage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-primary-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading clinic details...</p>
+          <p className="mt-4 text-gray-600 dark:text-gray-400">Loading clinic details...</p>
         </div>
       </div>
     );
@@ -97,12 +97,10 @@ export default function ClinicDetailPage() {
     );
   }
 
-  const colorPalette = generateColorPalette(clinic.primary_color);
-
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
+      <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 transition-colors sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-4">
@@ -121,7 +119,7 @@ export default function ClinicDetailPage() {
               </div>
               <div>
                 <div className="flex items-center space-x-2">
-                  <h1 className="text-xl font-bold text-gray-900">{clinic.name}</h1>
+                  <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">{clinic.name}</h1>
                   {clinic.is_active ? (
                     <span className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded-full font-medium">
                       Active
@@ -132,7 +130,7 @@ export default function ClinicDetailPage() {
                     </span>
                   )}
                 </div>
-                <p className="text-xs text-gray-500">Clinic ID: {clinic.id}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Clinic ID: {clinic.display_id}</p>
               </div>
             </div>
 
@@ -163,240 +161,189 @@ export default function ClinicDetailPage() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        {/* Clinic Information Cards (for System Admin) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          {/* Clinic Details */}
           <div className="card">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2 mb-3">
+              <Building2 className="w-5 h-5 text-primary-600" />
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Clinic Details</h3>
+            </div>
+            <div className="space-y-2">
               <div>
-                <p className="text-sm text-gray-600">Total Patients</p>
-                <p className="text-3xl font-bold text-gray-900 mt-2">{stats.totalPatients}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Clinic Name</p>
+                <p className="font-medium text-gray-900 dark:text-gray-100">{clinic.name}</p>
               </div>
-              <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
-                <Users className="w-6 h-6 text-blue-600" />
+              <div>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Clinic ID</p>
+                <p className="font-medium text-gray-900 dark:text-gray-100">{clinic.display_id || `#${clinic.id}`}</p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Status</p>
+                {clinic.is_active ? (
+                  <span className="inline-flex items-center px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">
+                    Active
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-medium">
+                    Inactive
+                  </span>
+                )}
               </div>
             </div>
           </div>
 
+          {/* Branding */}
           <div className="card">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2 mb-3">
+              <Palette className="w-5 h-5 text-primary-600" />
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Branding</h3>
+            </div>
+            <div className="space-y-3">
               <div>
-                <p className="text-sm text-gray-600">Upcoming Sessions</p>
-                <p className="text-3xl font-bold text-gray-900 mt-2">{stats.upcomingSessions}</p>
-              </div>
-              <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
-                <Calendar className="w-6 h-6 text-green-600" />
+                <p className="text-xs text-gray-500 mb-2">Primary Color</p>
+                <div className="flex items-center space-x-3">
+                  <div 
+                    className="w-12 h-12 rounded-lg border-2 border-gray-200"
+                    style={{ backgroundColor: clinic.primary_color }}
+                  />
+                  <span className="font-mono text-sm text-gray-700">{clinic.primary_color}</span>
+                </div>
               </div>
             </div>
           </div>
 
+          {/* User Counts */}
           <div className="card">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Active Therapists</p>
-                <p className="text-3xl font-bold text-gray-900 mt-2">{stats.activeTherapists}</p>
-              </div>
-              <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
-                <Activity className="w-6 h-6 text-purple-600" />
-              </div>
+            <div className="flex items-center space-x-2 mb-3">
+              <Users className="w-5 h-5 text-primary-600" />
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Users</h3>
             </div>
-          </div>
-
-          <div className="card">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Completed Sessions</p>
-                <p className="text-3xl font-bold text-gray-900 mt-2">{stats.completedSessions}</p>
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <p className="text-sm text-gray-600 dark:text-gray-400">Administrators</p>
+                <p className="font-semibold text-gray-900 dark:text-gray-100">{users.adminCount}</p>
               </div>
-              <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center">
-                <CheckCircle className="w-6 h-6 text-emerald-600" />
+              <div className="flex justify-between">
+                <p className="text-sm text-gray-600 dark:text-gray-400">Staff Members</p>
+                <p className="font-semibold text-gray-900 dark:text-gray-100">{users.staffCount}</p>
+              </div>
+              <div className="flex justify-between pt-2 border-t border-gray-200">
+                <p className="text-sm font-medium text-gray-700">Total Users</p>
+                <p className="font-bold text-gray-900 dark:text-gray-100">{users.total}</p>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Users Section */}
-          <div className="space-y-6">
-            {/* Admins */}
-            <div className="card">
-              <div className="flex items-center space-x-2 mb-4">
-                <UserCheck className="w-5 h-5 text-primary-600" />
-                <h2 className="text-lg font-semibold text-gray-900">
-                  Administrators ({users.adminCount})
-                </h2>
-              </div>
-              
-              <div className="space-y-3">
-                {users.admins.map((admin) => (
-                  <div key={admin.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-primary-600 rounded-full flex items-center justify-center">
-                        <span className="text-white font-medium text-sm">
-                          {admin.first_name[0]}{admin.last_name[0]}
-                        </span>
-                      </div>
-                      <div>
-                        <p className="font-medium text-gray-900">
+        {/* Administrators Section */}
+        <div className="card">
+          <div className="flex items-center space-x-2 mb-6">
+            <UserCheck className="w-5 h-5 text-primary-600" />
+            <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+              Clinic Administrators
+            </h2>
+            <span className="text-sm text-gray-500 dark:text-gray-400">({users.adminCount})</span>
+          </div>
+          
+          {users.admins.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {users.admins.map((admin, index) => (
+                <div key={admin.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                  <div className="flex items-start space-x-3">
+                    <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full flex items-center justify-center flex-shrink-0">
+                      <span className="text-white font-bold text-base">
+                        {admin.first_name[0]}{admin.last_name[0]}
+                      </span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between mb-1">
+                        <p className="font-semibold text-gray-900 truncate">
                           {admin.first_name} {admin.last_name}
                         </p>
-                        <p className="text-sm text-gray-500">{admin.email}</p>
+                        {admin.is_active ? (
+                          <span className="text-xs px-2 py-0.5 bg-green-100 text-green-700 rounded-full flex-shrink-0">
+                            Active
+                          </span>
+                        ) : (
+                          <span className="text-xs px-2 py-0.5 bg-gray-200 text-gray-700 rounded-full flex-shrink-0">
+                            Inactive
+                          </span>
+                        )}
+                      </div>
+                      <div className="space-y-1">
+                        <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
+                          <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                          </svg>
+                          <span className="truncate">{admin.email}</span>
+                        </div>
+                        <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
+                          <svg className="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                          </svg>
+                          ID: {admin.display_id || `#${admin.id}`}
+                        </div>
+                        <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
+                          <svg className="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                          </svg>
+                          Administrator {index + 1}
+                        </div>
                       </div>
                     </div>
-                    {admin.is_active ? (
-                      <span className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded-full">
-                        Active
-                      </span>
-                    ) : (
-                      <span className="text-xs px-2 py-1 bg-gray-200 text-gray-700 rounded-full">
-                        Inactive
-                      </span>
-                    )}
                   </div>
-                ))}
-                
-                {users.admins.length === 0 && (
-                  <p className="text-sm text-gray-500 text-center py-4">No administrators</p>
-                )}
-              </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <UserCheck className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+              <p className="text-gray-500 dark:text-gray-400">No administrators found</p>
+            </div>
+          )}
+        </div>
+
+        {/* Additional Clinic Info */}
+        <div className="card">
+          <h2 className="text-xl font-bold text-gray-900 mb-6">Additional Information</h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <p className="text-sm text-gray-600 mb-1">Created Date</p>
+              <p className="font-medium text-gray-900 dark:text-gray-100">
+                {new Date(clinic.created_at).toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                })}
+              </p>
+            </div>
+            
+            <div>
+              <p className="text-sm text-gray-600 mb-1">Last Updated</p>
+              <p className="font-medium text-gray-900 dark:text-gray-100">
+                {new Date(clinic.updated_at).toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                })}
+              </p>
             </div>
 
-            {/* Staff */}
-            <div className="card">
-              <div className="flex items-center space-x-2 mb-4">
-                <Users className="w-5 h-5 text-primary-600" />
-                <h2 className="text-lg font-semibold text-gray-900">
-                  Staff Members ({users.staffCount})
-                </h2>
-              </div>
-              
-              <div className="space-y-3">
-                {users.staff.map((staff) => (
-                  <div key={staff.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
-                        <span className="text-white font-medium text-sm">
-                          {staff.first_name[0]}{staff.last_name[0]}
-                        </span>
-                      </div>
-                      <div>
-                        <p className="font-medium text-gray-900">
-                          {staff.first_name} {staff.last_name}
-                        </p>
-                        <p className="text-sm text-gray-500">{staff.email}</p>
-                      </div>
-                    </div>
-                    {staff.is_active ? (
-                      <span className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded-full">
-                        Active
-                      </span>
-                    ) : (
-                      <span className="text-xs px-2 py-1 bg-gray-200 text-gray-700 rounded-full">
-                        Inactive
-                      </span>
-                    )}
-                  </div>
-                ))}
-                
-                {users.staff.length === 0 && (
-                  <p className="text-sm text-gray-500 text-center py-4">No staff members</p>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* Brand & Color Theme */}
-          <div className="space-y-6">
-            <div className="card">
-              <div className="flex items-center space-x-2 mb-4">
-                <Palette className="w-5 h-5 text-primary-600" />
-                <h2 className="text-lg font-semibold text-gray-900">Brand Color Theme</h2>
-              </div>
-              
-              <div className="space-y-4">
-                {/* Primary Color */}
-                <div className="flex items-center space-x-3">
-                  <div
-                    className="w-16 h-16 rounded-lg border-2 border-gray-200"
-                    style={{ backgroundColor: clinic.primary_color }}
-                  />
-                  <div>
-                    <p className="font-medium text-gray-900">Primary Color</p>
-                    <p className="text-sm text-gray-500 font-mono">{clinic.primary_color}</p>
-                  </div>
-                </div>
-
-                {/* Full Palette */}
-                <div>
-                  <p className="text-sm font-medium text-gray-700 mb-3">
-                    Complete Color Palette (11 shades)
-                  </p>
-                  <div className="grid grid-cols-11 gap-1">
-                    {Object.entries(colorPalette).map(([shade, color]) => (
-                      <div key={shade} className="space-y-1">
-                        <div
-                          className="w-full h-16 rounded border border-gray-200"
-                          style={{ backgroundColor: color }}
-                          title={color}
-                        />
-                        <p className="text-xs text-center text-gray-600">{shade}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
+            <div>
+              <p className="text-sm text-gray-600 mb-1">Total Patients</p>
+              <p className="font-medium text-gray-900 dark:text-gray-100">{stats.totalPatients}</p>
             </div>
 
-            {/* Clinic Info */}
-            <div className="card">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Clinic Information</h2>
-              
-              <div className="space-y-3">
-                <div>
-                  <p className="text-sm text-gray-600">Clinic Name</p>
-                  <p className="font-medium text-gray-900">{clinic.name}</p>
-                </div>
-                
-                <div>
-                  <p className="text-sm text-gray-600">Clinic ID</p>
-                  <p className="font-medium text-gray-900">{clinic.id}</p>
-                </div>
-                
-                <div>
-                  <p className="text-sm text-gray-600">Created</p>
-                  <p className="font-medium text-gray-900">
-                    {new Date(clinic.created_at).toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric',
-                    })}
-                  </p>
-                </div>
-                
-                <div>
-                  <p className="text-sm text-gray-600">Last Updated</p>
-                  <p className="font-medium text-gray-900">
-                    {new Date(clinic.updated_at).toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric',
-                    })}
-                  </p>
-                </div>
-
-                <div>
-                  <p className="text-sm text-gray-600">Total Users</p>
-                  <p className="font-medium text-gray-900">
-                    {users.total} ({users.adminCount} admins, {users.staffCount} staff)
-                  </p>
-                </div>
-
-                <div>
-                  <p className="text-sm text-gray-600">Total Sessions</p>
-                  <p className="font-medium text-gray-900">
-                    {stats.totalSessions} ({stats.completedSessions} completed, {stats.upcomingSessions} upcoming)
-                  </p>
-                </div>
-              </div>
+            <div>
+              <p className="text-sm text-gray-600 mb-1">Total Sessions</p>
+              <p className="font-medium text-gray-900 dark:text-gray-100">
+                {stats.totalSessions} total
+              </p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                {stats.completedSessions} completed, {stats.upcomingSessions} upcoming
+              </p>
             </div>
           </div>
         </div>
@@ -404,10 +351,10 @@ export default function ClinicDetailPage() {
 
       {/* Edit Modal */}
       {showEditModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black dark:bg-gray-900 bg-opacity-50 dark:bg-opacity-70 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl max-w-2xl w-full p-6">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-gray-900">Edit Clinic</h2>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Edit Clinic</h2>
               <button
                 onClick={() => setShowEditModal(false)}
                 className="text-gray-400 hover:text-gray-600"
@@ -494,10 +441,10 @@ export default function ClinicDetailPage() {
 
       {/* Status Toggle Modal */}
       {showStatusModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black dark:bg-gray-900 bg-opacity-50 dark:bg-opacity-70 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl max-w-md w-full p-6">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-gray-900">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">
                 {clinic.is_active ? 'Deactivate' : 'Activate'} Clinic
               </h2>
               <button

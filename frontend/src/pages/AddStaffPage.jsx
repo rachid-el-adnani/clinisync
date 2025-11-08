@@ -2,17 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { staffAPI } from '../utils/api';
 import { ArrowLeft, UserPlus, Save } from 'lucide-react';
-
-const JOB_TITLES = [
-  'Therapist',
-  'Physical Therapist',
-  'Occupational Therapist',
-  'Receptionist',
-  'Administrative Assistant',
-  'Practice Manager',
-  'Billing Specialist',
-  'Other',
-];
+import { JOB_TITLES } from '../constants/jobTitles';
 
 export default function AddStaffPage() {
   const navigate = useNavigate();
@@ -26,7 +16,6 @@ export default function AddStaffPage() {
     confirmPassword: '',
     role: 'staff',
     job_title: '',
-    customJobTitle: '',
   });
 
   const handleSubmit = async (e) => {
@@ -48,17 +37,13 @@ export default function AddStaffPage() {
     setLoading(true);
 
     try {
-      const jobTitle = formData.job_title === 'Other' 
-        ? formData.customJobTitle 
-        : formData.job_title;
-
       const response = await staffAPI.create({
         first_name: formData.first_name,
         last_name: formData.last_name,
         email: formData.email,
         password: formData.password,
         role: formData.role,
-        job_title: jobTitle,
+        job_title: formData.job_title,
       });
 
       const newStaff = response.data.data;
@@ -75,9 +60,9 @@ export default function AddStaffPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
+      <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 transition-colors sticky top-0 z-10">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center space-x-4 h-16">
             <button
@@ -92,8 +77,8 @@ export default function AddStaffPage() {
                 <UserPlus className="w-5 h-5 text-primary-600" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gray-900">Add New Staff Member</h1>
-                <p className="text-xs text-gray-500">Enter staff member information</p>
+                <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">Add New Staff Member</h1>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Enter staff member information</p>
               </div>
             </div>
           </div>
@@ -161,7 +146,7 @@ export default function AddStaffPage() {
                     placeholder="staff@example.com"
                     required
                   />
-                  <p className="mt-1 text-xs text-gray-500">This will be used for login</p>
+                  <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">This will be used for login</p>
                 </div>
 
                 <div>
@@ -215,7 +200,7 @@ export default function AddStaffPage() {
                     <option value="staff">Staff (View & Edit Patients)</option>
                     <option value="clinic_admin">Clinic Admin (Full Access)</option>
                   </select>
-                  <p className="mt-1 text-xs text-gray-500">
+                  <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                     Staff can view/edit patients. Clinic admins can also manage staff and settings.
                   </p>
                 </div>
@@ -233,29 +218,15 @@ export default function AddStaffPage() {
                   >
                     <option value="">Select a job title...</option>
                     {JOB_TITLES.map((title) => (
-                      <option key={title} value={title}>
-                        {title}
+                      <option key={title.value} value={title.value}>
+                        {title.label}
                       </option>
                     ))}
                   </select>
+                  <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    Only therapist roles can be assigned to patient sessions
+                  </p>
                 </div>
-
-                {formData.job_title === 'Other' && (
-                  <div>
-                    <label className="label">
-                      Custom Job Title <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      name="customJobTitle"
-                      value={formData.customJobTitle}
-                      onChange={handleChange}
-                      className="input"
-                      placeholder="Enter custom job title"
-                      required
-                    />
-                  </div>
-                )}
               </div>
             </div>
 

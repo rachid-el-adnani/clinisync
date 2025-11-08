@@ -8,10 +8,11 @@ import { useAuth } from '../contexts/AuthContext';
 export default function PatientDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { canEdit, isSecretary } = useAuth();
+  const { canEdit } = useAuth();
   const [patient, setPatient] = useState(null);
   const [sessions, setSessions] = useState([]);
-  const [therapist, setTherapist] = useState(null);
+  const [therapist, setTherapist] = useState(null); // Primary therapist (from first session)
+  const [therapists, setTherapists] = useState({}); // Map of therapist_id -> therapist object
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [isEditing, setIsEditing] = useState(false);
@@ -35,19 +36,33 @@ export default function PatientDetailPage() {
       // Fetch patient sessions
       const sessionsResponse = await sessionsAPI.getAll({ patient_id: id });
       const patientSessions = sessionsResponse.data.data || [];
-      setSessions(patientSessions);
       
-      // Find primary therapist from sessions
-      if (patientSessions.length > 0) {
-        const therapistId = patientSessions[0].therapist_id;
-        if (therapistId) {
-          try {
-            const therapistResponse = await staffAPI.getById(therapistId);
-            setTherapist(therapistResponse.data.data);
-          } catch (err) {
-            console.error('Failed to fetch therapist:', err);
-          }
+      // Filter out past sessions and sort by upcoming date
+      const now = new Date();
+      const upcomingSessions = patientSessions
+        .filter(session => new Date(session.start_time) > now)
+        .sort((a, b) => new Date(a.start_time) - new Date(b.start_time));
+      
+      setSessions(upcomingSessions);
+      
+      // Fetch all unique therapists from upcoming sessions
+      const uniqueTherapistIds = [...new Set(upcomingSessions.map(s => s.therapist_id).filter(Boolean))];
+      const therapistsMap = {};
+      
+      for (const therapistId of uniqueTherapistIds) {
+        try {
+          const therapistResponse = await staffAPI.getById(therapistId);
+          therapistsMap[therapistId] = therapistResponse.data.data;
+        } catch (err) {
+          console.error(`Failed to fetch therapist ${therapistId}:`, err);
         }
+      }
+      
+      setTherapists(therapistsMap);
+      
+      // Set primary therapist (from first upcoming session)
+      if (upcomingSessions.length > 0 && upcomingSessions[0].therapist_id) {
+        setTherapist(therapistsMap[upcomingSessions[0].therapist_id]);
       }
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to fetch patient details');
@@ -82,7 +97,7 @@ export default function PatientDetailPage() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-primary-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading patient details...</p>
+          <p className="mt-4 text-gray-600 dark:text-gray-400">Loading patient details...</p>
         </div>
       </div>
     );
@@ -102,9 +117,9 @@ export default function PatientDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
+      <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 transition-colors sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4">
@@ -122,10 +137,10 @@ export default function PatientDetailPage() {
                   </span>
                 </div>
                 <div>
-                  <h1 className="text-xl font-bold text-gray-900">
+                  <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
                     {patient?.first_name} {patient?.last_name}
                   </h1>
-                  <p className="text-xs text-gray-500">Patient ID: {patient?.id}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Patient ID: {patient?.display_id}</p>
                 </div>
               </div>
             </div>
@@ -166,8 +181,8 @@ export default function PatientDetailPage() {
           {/* Left Column - Patient Details */}
           <div className="lg:col-span-2 space-y-6">
             {/* Basic Information Card */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Patient Information</h2>
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Patient Information</h2>
               
               {isEditing ? (
                 <form onSubmit={handleUpdate} className="space-y-4">
@@ -251,7 +266,7 @@ export default function PatientDetailPage() {
                       onChange={(e) => setEditData({ ...editData, is_active: e.target.checked })}
                       className="rounded"
                     />
-                    <label className="text-sm text-gray-700">Active Patient</label>
+                    <label className="text-sm text-gray-700 dark:text-gray-300">Active Patient</label>
                   </div>
                   
                   <div className="flex space-x-3">
@@ -266,8 +281,8 @@ export default function PatientDetailPage() {
                   <div className="flex items-start space-x-3">
                     <User className="w-5 h-5 text-gray-400 mt-0.5" />
                     <div>
-                      <p className="text-sm text-gray-500">Full Name</p>
-                      <p className="text-sm font-medium text-gray-900">
+                      <p className="text-sm text-gray-500 dark:text-gray-400">Full Name</p>
+                      <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                         {patient?.first_name} {patient?.last_name}
                       </p>
                     </div>
@@ -277,8 +292,8 @@ export default function PatientDetailPage() {
                     <div className="flex items-start space-x-3">
                       <Mail className="w-5 h-5 text-gray-400 mt-0.5" />
                       <div>
-                        <p className="text-sm text-gray-500">Email</p>
-                        <p className="text-sm font-medium text-gray-900">{patient.email}</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">Email</p>
+                        <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{patient.email}</p>
                       </div>
                     </div>
                   )}
@@ -287,8 +302,8 @@ export default function PatientDetailPage() {
                     <div className="flex items-start space-x-3">
                       <Phone className="w-5 h-5 text-gray-400 mt-0.5" />
                       <div>
-                        <p className="text-sm text-gray-500">Phone</p>
-                        <p className="text-sm font-medium text-gray-900">{patient.phone}</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">Phone</p>
+                        <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{patient.phone}</p>
                       </div>
                     </div>
                   )}
@@ -297,8 +312,8 @@ export default function PatientDetailPage() {
                     <div className="flex items-start space-x-3">
                       <Calendar className="w-5 h-5 text-gray-400 mt-0.5" />
                       <div>
-                        <p className="text-sm text-gray-500">Date of Birth</p>
-                        <p className="text-sm font-medium text-gray-900">
+                        <p className="text-sm text-gray-500 dark:text-gray-400">Date of Birth</p>
+                        <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                           {new Date(patient.date_of_birth).toLocaleDateString()}
                         </p>
                       </div>
@@ -309,8 +324,8 @@ export default function PatientDetailPage() {
                     <div className="flex items-start space-x-3">
                       <MapPin className="w-5 h-5 text-gray-400 mt-0.5" />
                       <div>
-                        <p className="text-sm text-gray-500">Address</p>
-                        <p className="text-sm font-medium text-gray-900">{patient.address}</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">Address</p>
+                        <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{patient.address}</p>
                       </div>
                     </div>
                   )}
@@ -319,7 +334,7 @@ export default function PatientDetailPage() {
                     <div className="flex items-start space-x-3">
                       <FileText className="w-5 h-5 text-gray-400 mt-0.5" />
                       <div>
-                        <p className="text-sm text-gray-500">Medical Notes</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">Medical Notes</p>
                         <p className="text-sm font-medium text-gray-900 whitespace-pre-wrap">
                           {patient.medical_notes}
                         </p>
@@ -330,13 +345,13 @@ export default function PatientDetailPage() {
                   <div className="flex items-start space-x-3">
                     <Activity className="w-5 h-5 text-gray-400 mt-0.5" />
                     <div>
-                      <p className="text-sm text-gray-500">Status</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">Status</p>
                       {patient?.is_active ? (
                         <span className="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">
                           Active
                         </span>
                       ) : (
-                        <span className="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800">
+                        <span className="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800 dark:text-gray-100">
                           Inactive
                         </span>
                       )}
@@ -346,11 +361,11 @@ export default function PatientDetailPage() {
               )}
             </div>
 
-            {/* Sessions Card */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            {/* Sessions Card*/}
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold text-gray-900">
-                  Recent Sessions ({sessions.length})
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                  Upcoming Sessions ({sessions.length})
                 </h2>
                 {canEdit && (
                   <button
@@ -364,7 +379,7 @@ export default function PatientDetailPage() {
               </div>
               
               {sessions.length === 0 ? (
-                <p className="text-gray-500 text-sm">No sessions scheduled yet</p>
+                <p className="text-gray-500 text-sm">No upcoming sessions scheduled</p>
               ) : (
                 <div className="space-y-3">
                   {sessions.slice(0, 5).map((session) => (
@@ -373,16 +388,21 @@ export default function PatientDetailPage() {
                       className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
                     >
                       <div>
-                        <p className="text-sm font-medium text-gray-900">
+                        <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                           {new Date(session.start_time).toLocaleDateString()} at{' '}
                           {new Date(session.start_time).toLocaleTimeString([], {
                             hour: '2-digit',
                             minute: '2-digit',
                           })}
                         </p>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
                           Status: {session.status || 'Scheduled'}
                         </p>
+                        {session.therapist_id && therapists[session.therapist_id] && (
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                            Therapist: {therapists[session.therapist_id].first_name} {therapists[session.therapist_id].last_name}
+                          </p>
+                        )}
                       </div>
                       <span
                         className={`px-2 py-1 text-xs font-medium rounded-full ${
@@ -413,8 +433,8 @@ export default function PatientDetailPage() {
           {/* Right Column - Therapist Info */}
           <div className="space-y-6">
             {/* Designated Therapist Card */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Designated Therapist</h2>
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Designated Therapist</h2>
               
               {therapist ? (
                 <button
@@ -428,15 +448,15 @@ export default function PatientDetailPage() {
                       </span>
                     </div>
                     <div>
-                      <p className="font-medium text-gray-900">
+                      <p className="font-medium text-gray-900 dark:text-gray-100">
                         {therapist.first_name} {therapist.last_name}
                       </p>
-                      <p className="text-sm text-gray-500 capitalize">{therapist.role}</p>
+                      <p className="text-sm text-gray-500 capitalize">{therapist.display_id}</p>
                     </div>
                   </div>
                   
                   {therapist.email && (
-                    <div className="flex items-center space-x-2 text-sm text-gray-600 mb-1">
+                    <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400 mb-1">
                       <Mail className="w-4 h-4" />
                       <span>{therapist.email}</span>
                     </div>
@@ -452,21 +472,21 @@ export default function PatientDetailPage() {
             </div>
 
             {/* Quick Stats */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Stats</h2>
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Quick Stats</h2>
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Total Sessions</span>
-                  <span className="text-lg font-semibold text-gray-900">{sessions.length}</span>
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Total Sessions</span>
+                  <span className="text-lg font-semibold text-gray-900 dark:text-gray-100">{sessions.length}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Completed</span>
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Completed</span>
                   <span className="text-lg font-semibold text-green-600">
                     {sessions.filter((s) => s.status === 'completed').length}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Upcoming</span>
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Upcoming</span>
                   <span className="text-lg font-semibold text-blue-600">
                     {sessions.filter((s) => s.status === 'scheduled').length}
                   </span>
@@ -489,10 +509,10 @@ export default function PatientDetailPage() {
 
         {/* Delete Confirmation Modal */}
         {showDeleteConfirm && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Delete Patient</h3>
-              <p className="text-gray-600 mb-6">
+          <div className="fixed inset-0 bg-black dark:bg-gray-900 bg-opacity-50 dark:bg-opacity-70 flex items-center justify-center z-50 p-4">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full p-6 transition-colors">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Delete Patient</h3>
+              <p className="text-gray-600 dark:text-gray-400 mb-6">
                 Are you sure you want to delete {patient?.first_name} {patient?.last_name}? This action cannot be undone.
               </p>
               <div className="flex space-x-3">

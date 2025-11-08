@@ -37,18 +37,18 @@ export default function StaffManagementPage() {
   const getRoleBadgeColor = (role) => {
     switch (role) {
       case 'clinic_admin':
-        return 'bg-purple-100 text-purple-800';
+        return 'bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200';
       case 'staff':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200';
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
+      <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 transition-colors sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4">
@@ -64,8 +64,8 @@ export default function StaffManagementPage() {
                   <Users className="w-5 h-5 text-primary-600" />
                 </div>
                 <div>
-                  <h1 className="text-xl font-bold text-gray-900">Staff Members</h1>
-                  <p className="text-xs text-gray-500">{staff.length} total staff members</p>
+                  <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">Staff Members</h1>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">{staff.length} total staff members</p>
                 </div>
               </div>
             </div>
@@ -107,13 +107,13 @@ export default function StaffManagementPage() {
           <div className="flex items-center justify-center py-12">
             <div className="text-center">
               <div className="w-16 h-16 border-4 border-primary-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
-              <p className="mt-4 text-gray-600">Loading staff...</p>
+              <p className="mt-4 text-gray-600 dark:text-gray-400">Loading staff...</p>
             </div>
           </div>
         ) : filteredStaff.length === 0 ? (
           <div className="text-center py-12">
             <Users className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-600">
+            <p className="text-gray-600 dark:text-gray-400">
               {searchTerm ? 'No staff members found matching your search' : 'No staff members yet'}
             </p>
           </div>
@@ -123,7 +123,7 @@ export default function StaffManagementPage() {
               <div
                 key={member.id}
                 onClick={() => navigate(`/staff/${member.id}`)}
-                className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow cursor-pointer"
+                className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 hover:shadow-md transition-shadow cursor-pointer"
               >
                 <div className="flex items-start space-x-4">
                   <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0">
@@ -144,14 +144,18 @@ export default function StaffManagementPage() {
                         {member.role === 'clinic_admin' ? 'Admin' : 'Staff'}
                       </span>
                       {member.job_title && (
-                        <span className="text-xs text-gray-500">• {member.job_title}</span>
+                        <span className="text-xs text-gray-500 dark:text-gray-400">• {member.job_title}</span>
                       )}
                     </div>
                   </div>
                 </div>
 
                 <div className="mt-4 space-y-2">
-                  <div className="flex items-center space-x-2 text-sm text-gray-600">
+                  <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
+                    <User className="w-4 h-4 flex-shrink-0" />
+                    <span className="truncate">{member.display_id}</span>
+                  </div>
+                  <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
                     <Mail className="w-4 h-4 flex-shrink-0" />
                     <span className="truncate">{member.email}</span>
                   </div>
@@ -161,7 +165,7 @@ export default function StaffManagementPage() {
                         Active
                       </span>
                     ) : (
-                      <span className="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800">
+                      <span className="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800 dark:text-gray-100">
                         Inactive
                       </span>
                     )}

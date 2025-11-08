@@ -27,15 +27,15 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 via-white to-primary-100">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 via-white to-primary-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center mb-4">
             <img src="/logo.svg" alt="CliniSync Logo" className="w-24 h-24" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900">CliniSync</h1>
-          <p className="text-gray-600 mt-2">Your Secure Foundation for Wellness</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">CliniSync</h1>
+          <p className="text-gray-600 dark:text-gray-300 mt-2">Your Secure Foundation for Wellness</p>
         </div>
 
         {/* Login Card */}

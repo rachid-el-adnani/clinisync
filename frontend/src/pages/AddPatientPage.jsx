@@ -38,9 +38,9 @@ export default function AddPatientPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
+      <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 transition-colors sticky top-0 z-10">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center space-x-4 h-16">
             <button
@@ -55,8 +55,8 @@ export default function AddPatientPage() {
                 <User className="w-5 h-5 text-primary-600" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gray-900">Add New Patient</h1>
-                <p className="text-xs text-gray-500">Enter patient information</p>
+                <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">Add New Patient</h1>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Enter patient information</p>
               </div>
             </div>
           </div>

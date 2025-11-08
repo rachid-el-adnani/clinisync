@@ -9,7 +9,8 @@ export default function SessionSeriesPage() {
   const navigate = useNavigate();
   const [sessions, setSessions] = useState([]);
   const [patient, setPatient] = useState(null);
-  const [therapist, setTherapist] = useState(null);
+  const [therapist, setTherapist] = useState(null); // Primary therapist (from first session)
+  const [therapists, setTherapists] = useState({}); // Map of therapist_id -> therapist object
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [editingSession, setEditingSession] = useState(null);
@@ -34,14 +35,24 @@ export default function SessionSeriesPage() {
       patientSessions.sort((a, b) => new Date(a.start_time) - new Date(b.start_time));
       setSessions(patientSessions);
       
-      // Fetch therapist info
-      if (patientSessions.length > 0 && patientSessions[0].therapist_id) {
+      // Fetch all unique therapists from sessions
+      const uniqueTherapistIds = [...new Set(patientSessions.map(s => s.therapist_id).filter(Boolean))];
+      const therapistsMap = {};
+      
+      for (const therapistId of uniqueTherapistIds) {
         try {
-          const therapistResponse = await staffAPI.getById(patientSessions[0].therapist_id);
-          setTherapist(therapistResponse.data.data);
+          const therapistResponse = await staffAPI.getById(therapistId);
+          therapistsMap[therapistId] = therapistResponse.data.data;
         } catch (err) {
-          console.error('Failed to fetch therapist:', err);
+          console.error(`Failed to fetch therapist ${therapistId}:`, err);
         }
+      }
+      
+      setTherapists(therapistsMap);
+      
+      // Set primary therapist (from first session)
+      if (patientSessions.length > 0 && patientSessions[0].therapist_id) {
+        setTherapist(therapistsMap[patientSessions[0].therapist_id]);
       }
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to fetch sessions');
@@ -86,7 +97,7 @@ export default function SessionSeriesPage() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-primary-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading sessions...</p>
+          <p className="mt-4 text-gray-600 dark:text-gray-400">Loading sessions...</p>
         </div>
       </div>
     );
@@ -106,9 +117,9 @@ export default function SessionSeriesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
+      <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 transition-colors sticky top-0 z-10">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4">
@@ -124,8 +135,8 @@ export default function SessionSeriesPage() {
                   <Calendar className="w-5 h-5 text-primary-600" />
                 </div>
                 <div>
-                  <h1 className="text-xl font-bold text-gray-900">Session Series</h1>
-                  <p className="text-xs text-gray-500">{sessions.length} total sessions</p>
+                  <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">Session Series</h1>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">{sessions.length} total sessions</p>
                 </div>
               </div>
             </div>
@@ -138,7 +149,7 @@ export default function SessionSeriesPage() {
         {/* Patient & Therapist Info */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           {/* Patient Card */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
             <h3 className="text-sm font-medium text-gray-500 mb-3">Patient</h3>
             <button
               onClick={() => navigate(`/patients/${patient.id}`)}
@@ -150,16 +161,16 @@ export default function SessionSeriesPage() {
                 </span>
               </div>
               <div>
-                <p className="font-semibold text-gray-900">
+                <p className="font-semibold text-gray-900 dark:text-gray-100">
                   {patient?.first_name} {patient?.last_name}
                 </p>
-                <p className="text-sm text-gray-500">View patient profile →</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">View patient profile →</p>
               </div>
             </button>
           </div>
 
           {/* Therapist Card */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
             <h3 className="text-sm font-medium text-gray-500 mb-3">Therapist</h3>
             {therapist ? (
               <button
@@ -172,10 +183,10 @@ export default function SessionSeriesPage() {
                   </span>
                 </div>
                 <div>
-                  <p className="font-semibold text-gray-900">
+                  <p className="font-semibold text-gray-900 dark:text-gray-100">
                     {therapist.first_name} {therapist.last_name}
                   </p>
-                  <p className="text-sm text-gray-500">{therapist.job_title || 'Therapist'}</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">{therapist.job_title || 'Therapist'}</p>
                 </div>
               </button>
             ) : (
@@ -194,14 +205,14 @@ export default function SessionSeriesPage() {
               {futureSessions.map((session, index) => (
                 <div
                   key={session.id}
-                  className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow"
+                  className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 hover:shadow-md transition-shadow"
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex items-start space-x-4 flex-1">
                       {getStatusIcon(session.status)}
                       <div className="flex-1">
                         <div className="flex items-center space-x-3 mb-2">
-                          <h3 className="text-lg font-semibold text-gray-900">
+                          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                             Session {index + 1}
                           </h3>
                           {session.is_follow_up && (
@@ -213,7 +224,7 @@ export default function SessionSeriesPage() {
                             {session.status || 'Scheduled'}
                           </span>
                         </div>
-                        <div className="flex items-center space-x-4 text-sm text-gray-600">
+                        <div className="flex items-center space-x-4 text-sm text-gray-600 dark:text-gray-400">
                           <div className="flex items-center space-x-2">
                             <Calendar className="w-4 h-4" />
                             <span>{new Date(session.start_time).toLocaleDateString('en-US', { 
@@ -231,6 +242,17 @@ export default function SessionSeriesPage() {
                             })}</span>
                           </div>
                         </div>
+                        {session.therapist_id && therapists[session.therapist_id] && (
+                          <div className="flex items-center space-x-2 text-sm text-gray-600 mt-2">
+                            <User className="w-4 h-4" />
+                            <span>
+                              {therapists[session.therapist_id].first_name} {therapists[session.therapist_id].last_name}
+                              {session.therapist_id !== sessions[0]?.therapist_id && (
+                                <span className="ml-1 text-xs text-amber-600">(Different therapist)</span>
+                              )}
+                            </span>
+                          </div>
+                        )}
                         {session.periodicity && session.periodicity !== 'None' && (
                           <p className="text-sm text-gray-500 mt-2">
                             Recurrence: {session.periodicity}
@@ -267,14 +289,14 @@ export default function SessionSeriesPage() {
               {pastSessions.map((session, index) => (
                 <div
                   key={session.id}
-                  className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 opacity-75"
+                  className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 opacity-75"
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex items-start space-x-4 flex-1">
                       {getStatusIcon(session.status)}
                       <div className="flex-1">
                         <div className="flex items-center space-x-3 mb-2">
-                          <h3 className="text-lg font-semibold text-gray-900">
+                          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                             Session {pastSessions.length - index}
                           </h3>
                           {session.is_follow_up && (
@@ -286,7 +308,7 @@ export default function SessionSeriesPage() {
                             {session.status || 'Scheduled'}
                           </span>
                         </div>
-                        <div className="flex items-center space-x-4 text-sm text-gray-600">
+                        <div className="flex items-center space-x-4 text-sm text-gray-600 dark:text-gray-400">
                           <div className="flex items-center space-x-2">
                             <Calendar className="w-4 h-4" />
                             <span>{new Date(session.start_time).toLocaleDateString('en-US', { 
@@ -327,10 +349,10 @@ export default function SessionSeriesPage() {
 
         {/* Empty State */}
         {sessions.length === 0 && (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-12 text-center">
             <Calendar className="w-16 h-16 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-gray-900 mb-2">No Sessions Found</h3>
-            <p className="text-gray-600">This patient doesn't have any sessions yet.</p>
+            <p className="text-gray-600 dark:text-gray-400">This patient doesn't have any sessions yet.</p>
           </div>
         )}
 

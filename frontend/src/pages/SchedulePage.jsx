@@ -12,6 +12,7 @@ export default function ScheduleCalendarPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(new Date()); // For showing appointments on the right
   const [showSessionModal, setShowSessionModal] = useState(false);
 
   useEffect(() => {
@@ -131,9 +132,9 @@ export default function ScheduleCalendarPage() {
   const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
+      <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 transition-colors sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4">
@@ -158,8 +159,8 @@ export default function ScheduleCalendarPage() {
                   <Calendar className="w-5 h-5 text-primary-600" />
                 </div>
                 <div>
-                  <h1 className="text-xl font-bold text-gray-900">Schedule</h1>
-                  <p className="text-xs text-gray-500">Calendar View</p>
+                  <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">Schedule</h1>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Calendar View</p>
                 </div>
               </div>
             </div>
@@ -197,11 +198,13 @@ export default function ScheduleCalendarPage() {
           <div className="flex items-center justify-center py-12">
             <div className="text-center">
               <div className="w-16 h-16 border-4 border-primary-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
-              <p className="mt-4 text-gray-600">Loading calendar...</p>
+              <p className="mt-4 text-gray-600 dark:text-gray-400">Loading calendar...</p>
             </div>
           </div>
         ) : (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Calendar - Left Side (2/3 width) */}
+            <div className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden transition-colors">
             {/* Calendar Grid */}
             <div className="grid grid-cols-7">
               {/* Week day headers */}
@@ -228,10 +231,17 @@ export default function ScheduleCalendarPage() {
                 const daySessions = getSessionsForDate(date);
                 const isCurrentDay = isToday(date);
 
+                const isSelected = 
+                  selectedDate.getDate() === date.getDate() &&
+                  selectedDate.getMonth() === date.getMonth() &&
+                  selectedDate.getFullYear() === date.getFullYear();
+
                 return (
-                  <div
+                  <button
                     key={date.toISOString()}
-                    className={`border-b border-r border-gray-200 min-h-[120px] p-2 ${
+                    onClick={() => setSelectedDate(date)}
+                    className={`border-b border-r border-gray-200 min-h-[120px] p-2 text-left cursor-pointer ${
+                      isSelected ? 'bg-primary-100 ring-2 ring-primary-500 ring-inset' :
                       isCurrentDay ? 'bg-primary-50' : 'hover:bg-gray-50'
                     } transition-colors`}
                   >
@@ -256,10 +266,13 @@ export default function ScheduleCalendarPage() {
                       {daySessions.slice(0, 3).map((session) => {
                         const patient = patients[session.patient_id];
                         return (
-                          <button
+                          <div
                             key={session.id}
-                            onClick={() => navigate(`/sessions/patient/${session.patient_id}`)}
-                            className="w-full text-left p-2 rounded bg-primary-100 hover:bg-primary-200 transition-colors text-xs"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              navigate(`/sessions/patient/${session.patient_id}`);
+                            }}
+                            className="w-full text-left p-2 rounded bg-primary-100 hover:bg-primary-200 transition-colors text-xs cursor-pointer"
                           >
                             <div className="flex items-center space-x-1 mb-1">
                               <User className="w-3 h-3 text-primary-600" />
@@ -275,7 +288,7 @@ export default function ScheduleCalendarPage() {
                                 minute: '2-digit',
                               })}
                             </div>
-                          </button>
+                          </div>
                         );
                       })}
                       {daySessions.length > 3 && (
@@ -284,9 +297,110 @@ export default function ScheduleCalendarPage() {
                         </div>
                       )}
                     </div>
-                  </div>
+                  </button>
                 );
               })}
+            </div>
+            </div>
+
+            {/* Appointments List - Right Side (1/3 width) */}
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 lg:sticky lg:top-24 lg:h-[calc(100vh-12rem)]">
+              <div className="flex flex-col h-full">
+                {/* Header */}
+                <div className="mb-6">
+                  <h2 className="text-lg font-semibold text-gray-900 mb-2">
+                    {selectedDate.toLocaleDateString('en-US', { 
+                      weekday: 'long',
+                      month: 'long', 
+                      day: 'numeric',
+                      year: 'numeric'
+                    })}
+                  </h2>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    {getSessionsForDate(selectedDate).length} appointment{getSessionsForDate(selectedDate).length !== 1 ? 's' : ''}
+                  </p>
+                </div>
+
+                {/* Appointments List */}
+                <div className="flex-1 overflow-y-auto">
+                  {getSessionsForDate(selectedDate).length === 0 ? (
+                    <div className="flex flex-col items-center justify-center h-full text-center py-12">
+                      <Calendar className="w-16 h-16 text-gray-300 mb-4" />
+                      <p className="text-gray-500 font-medium mb-2">No appointments</p>
+                      <p className="text-sm text-gray-400">
+                        No sessions scheduled for this day
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {getSessionsForDate(selectedDate)
+                        .sort((a, b) => new Date(a.start_time) - new Date(b.start_time))
+                        .map((session) => {
+                          const patient = patients[session.patient_id];
+                          const therapist = therapists[session.therapist_id];
+                          
+                          return (
+                            <button
+                              key={session.id}
+                              onClick={() => navigate(`/sessions/patient/${session.patient_id}`)}
+                              className="w-full text-left p-4 rounded-lg border border-gray-200 hover:border-primary-300 hover:bg-primary-50 transition-all"
+                            >
+                              <div className="flex items-start justify-between mb-2">
+                                <div className="flex items-center space-x-2">
+                                  <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center">
+                                    <User className="w-5 h-5 text-primary-600" />
+                                  </div>
+                                  <div>
+                                    <p className="font-semibold text-gray-900 dark:text-gray-100">
+                                      {patient
+                                        ? `${patient.first_name} ${patient.last_name}`
+                                        : 'Unknown Patient'}
+                                    </p>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                                      {therapist
+                                        ? `Dr. ${therapist.first_name} ${therapist.last_name}`
+                                        : 'Unknown Therapist'}
+                                    </p>
+                                  </div>
+                                </div>
+                                <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                                  session.status === 'completed'
+                                    ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200'
+                                    : session.status === 'cancelled'
+                                    ? 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200'
+                                    : 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200'
+                                }`}>
+                                  {session.status || 'Scheduled'}
+                                </span>
+                              </div>
+                              
+                              <div className="flex items-center space-x-4 text-sm text-gray-600 dark:text-gray-400">
+                                <div className="flex items-center space-x-1">
+                                  <Calendar className="w-4 h-4" />
+                                  <span>
+                                    {new Date(session.start_time).toLocaleTimeString([], {
+                                      hour: '2-digit',
+                                      minute: '2-digit',
+                                    })}
+                                  </span>
+                                </div>
+                                <div>
+                                  {session.duration_minutes || 60} min
+                                </div>
+                              </div>
+                              
+                              {session.notes && (
+                                <p className="mt-2 text-xs text-gray-500 italic">
+                                  {session.notes}
+                                </p>
+                              )}
+                            </button>
+                          );
+                        })}
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         )}
