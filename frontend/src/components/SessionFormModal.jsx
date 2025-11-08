@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { X, Save } from 'lucide-react';
 import { sessionsAPI, patientsAPI, staffAPI } from '../utils/api';
+import { isTherapistRole } from '../constants/jobTitles';
 
 export default function SessionFormModal({ isOpen, onClose, onSuccess, preSelectedPatient = null }) {
   const [loading, setLoading] = useState(false);
@@ -33,7 +34,11 @@ export default function SessionFormModal({ isOpen, onClose, onSuccess, preSelect
         staffAPI.getAll(),
       ]);
       setPatients(patientsRes.data.data);
-      setTherapists(staffRes.data.data);
+      // Filter to only show staff with therapist job titles
+      const therapistStaff = staffRes.data.data.filter(staff => 
+        isTherapistRole(staff.job_title)
+      );
+      setTherapists(therapistStaff);
     } catch (err) {
       setError('Failed to load data');
     } finally {

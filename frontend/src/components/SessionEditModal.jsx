@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react';
 import { X, Save, AlertCircle } from 'lucide-react';
 import { sessionsAPI, staffAPI } from '../utils/api';
+import { useAuth } from '../contexts/AuthContext';
+import { isTherapistRole } from '../constants/jobTitles';
 
 export default function SessionEditModal({ isOpen, onClose, onSuccess, session }) {
+  const { canEdit, isSecretary } = useAuth();
   const [loading, setLoading] = useState(false);
   const [loadingData, setLoadingData] = useState(true);
   const [error, setError] = useState('');
@@ -34,7 +37,11 @@ export default function SessionEditModal({ isOpen, onClose, onSuccess, session }
     try {
       setLoadingData(true);
       const staffRes = await staffAPI.getAll();
-      setTherapists(staffRes.data.data);
+      // Filter to only show staff with therapist job titles
+      const therapistStaff = staffRes.data.data.filter(staff => 
+        isTherapistRole(staff.job_title)
+      );
+      setTherapists(therapistStaff);
     } catch (err) {
       setError('Failed to load data');
     } finally {
@@ -99,6 +106,8 @@ export default function SessionEditModal({ isOpen, onClose, onSuccess, session }
   if (!isOpen || !session) return null;
 
   const isFollowUp = session.is_follow_up;
+  // Only clinic admins and secretaries can change the assigned therapist
+  const canChangeTherapist = canEdit || isSecretary;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -164,6 +173,7 @@ export default function SessionEditModal({ isOpen, onClose, onSuccess, session }
                   onChange={handleChange}
                   className="input"
                   required
+                  disabled={!canChangeTherapist}
                 >
                   <option value="">Select a therapist...</option>
                   {therapists.map((therapist) => (
@@ -172,6 +182,11 @@ export default function SessionEditModal({ isOpen, onClose, onSuccess, session }
                     </option>
                   ))}
                 </select>
+                {!canChangeTherapist && (
+                  <p className="text-xs text-gray-500 mt-1">
+                    Only clinic administrators and secretaries can change the assigned therapist.
+                  </p>
+                )}
               </div>
 
               {/* Date and Time */}

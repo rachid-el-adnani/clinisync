@@ -95,7 +95,8 @@ export function AuthProvider({ children }) {
     if (user?.role === 'system_admin') return false;
     
     // Clinic admins and staff are blocked if their clinic is deactivated
-    return clinic && clinic.isActive === false;
+    // Check for both 0 (MySQL) and false (boolean)
+    return clinic && (clinic.isActive === false || clinic.isActive === 0);
   };
 
   const value = {

@@ -134,5 +134,8 @@ export const sessionsAPI = {
     api.put(`/sessions/${id}/cancel-series`),
 };
 
+// Export api instance for direct use
+export { api };
+
 export default api;
 
